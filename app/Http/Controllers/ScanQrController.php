@@ -2,87 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Validator;
-use App\Models\Absensi;
+use Illuminate\Http\Request;
 use App\Models\QrToken;
+use App\Models\Absensi;
 use Carbon\Carbon;
 
 class ScanQrController extends Controller
 {
-    /**
-     * Tampilkan halaman scan QR
-     */
     public function showScan()
     {
         if (!session('siswa_id')) {
-            return redirect()->route('login.siswa.show');
+            return redirect()->route('login.siswa.show')->with('error', 'Silakan login terlebih dahulu.');
         }
 
         return view('user.scan');
     }
 
-    /**
-     * Proses hasil scan QR
-     */
-    public function processScan()
+    public function processScan(Request $request)
     {
-        // Validasi input
-        $validator = Validator::make(request()->all(), [
-            'kode' => 'required|string',
+        $request->validate([
+            'kode' => 'required|string'
         ]);
 
-        if ($validator->fails()) {
-            return back()->with('error', 'Form tidak lengkap.');
-        }
+        $kode = trim($request->kode);
 
-        $kode = request('kode');
-
-        // Validasi Token QR
-        $qr = QrToken::where('token', $kode)
+        $token = QrToken::where('token', $kode)
             ->where('status', 'aktif')
-            ->where('expired_at', '>', now())
             ->first();
 
-        if (!$qr) {
-            return back()->with('error', 'Kode QR tidak valid atau kadaluwarsa.');
+        if (!$token) {
+            return "Kode QR tidak valid";
+        }
+
+        if (Carbon::now('Asia/Jakarta')->gt($token->expired_at)) {
+            return "Kode QR kadaluwarsa";
         }
 
         $userId = session('siswa_id');
-        $today  = Carbon::today()->toDateString();
 
-        // Cek apakah sudah absen hari ini
-        $sudahAbsen = Absensi::where('user_id', $userId)
-            ->whereDate('tanggal', $today)
-            ->exists();
+        $sudah = Absensi::where('user_id', $userId)
+            ->whereDate('waktu_absen', Carbon::today('Asia/Jakarta'))
+            ->first();
 
-        if ($sudahAbsen) {
-            return redirect()->route('user.dashboard')
-                ->with('error', 'Kamu sudah absen hari ini.');
+        if ($sudah) {
+            return "Kamu sudah absen";
         }
 
-        // Penentuan status kehadiran
-        $jamAbsen     = now()->format('H:i');
-        $jamMasuk     = "07:30";
-        $jamTerlambat = "08:00";
+        $now = Carbon::now('Asia/Jakarta');
+        $jamMasuk = Carbon::createFromTime(7,30,0,'Asia/Jakarta');
+        $jamTerlambat = Carbon::createFromTime(8,0,0,'Asia/Jakarta');
 
-        if ($jamAbsen <= $jamMasuk) {
+        if ($now->lt($jamMasuk)) {
             $status = 'hadir';
-        } elseif ($jamAbsen <= $jamTerlambat) {
-            $status = 'terlambat';
+        } elseif ($now->between($jamMasuk, $jamTerlambat)) {
+            $status = 'hadir';
         } else {
-            $status = 'alpha';
+            $status = 'terlambat';
         }
 
-        // Simpan absensi
         Absensi::create([
-            'user_id'     => $userId,
-            'tanggal'     => $today,
-            'waktu_absen' => now(),
-            'status'      => $status,
-            'metode'      => 'QR',
+            'user_id' => $userId,
+            'tanggal' => $now->toDateString(),
+            'waktu_absen' => $now->format('Y-m-d H:i:s'),
+            'status' => $status,
+            'metode' => 'qr',
+            'ip_address' => request()->ip(),
         ]);
 
-        return redirect()->route('user.success')
-            ->with('success', 'Absensi berhasil direkam!');
+        return "OK";
     }
 }

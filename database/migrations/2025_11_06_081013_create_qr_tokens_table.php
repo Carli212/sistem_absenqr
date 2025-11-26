@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('qr_tokens', function (Blueprint $table) {
             $table->id();
             $table->string('token');
-            $table->dateTime('expired_at');
+            $table->dateTime('expired_at')->nullable();
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });

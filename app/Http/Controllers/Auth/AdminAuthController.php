@@ -23,8 +23,8 @@ class AdminAuthController extends Controller
         ]);
 
         $admin = Admin::where('nama', $request->nama)
-                        ->where('nomor_wa', $request->nomor_wa)
-                        ->first();
+            ->where('nomor_wa', $request->nomor_wa)
+            ->first();
 
         if (!$admin || !Hash::check($request->password, $admin->password)) {
             return back()->withInput()->with('error', 'Data login tidak valid.');

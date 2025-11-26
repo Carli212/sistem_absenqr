@@ -16,32 +16,53 @@ class AbsensiController extends Controller
 
         $userId = session('siswa_id');
 
-        $today     = Carbon::today();
-        $now       = Carbon::now();
-        $month     = $now->month;
-        $year      = $now->year;
+        // pakai timezone Asia/Jakarta
+        $today = Carbon::today('Asia/Jakarta');
+        $now   = Carbon::now('Asia/Jakarta');
+        $month = $now->month;
+        $year  = $now->year;
 
-        // Ambil absen hari ini
+        /**
+         * 1. ABSENSI HARI INI
+         */
         $absenHariIni = Absensi::where('user_id', $userId)
             ->whereDate('waktu_absen', $today)
             ->first();
 
-        // Tentukan status hari ini
-        if ($absenHariIni) {
-            $statusHariIni = ucfirst($absenHariIni->status);
-        } else {
-            // Belum absen (bukan otomatis alfa)
-            $statusHariIni = 'Belum Absen';
-        }
+        $statusHariIni = $absenHariIni ? ucfirst($absenHariIni->status) : 'Belum Absen';
 
-        // Hitung hadir + telat saja
+        /**
+         * 2. TOTAL HADIR BULAN INI
+         */
         $totalBulanIni = Absensi::where('user_id', $userId)
             ->whereYear('waktu_absen', $year)
             ->whereMonth('waktu_absen', $month)
             ->whereIn('status', ['hadir', 'terlambat'])
             ->count();
 
-        // Riwayat terbaru
+        /**
+         * 3. HITUNG MENIT DATANG
+         */
+        $menitDatang = null;
+        if ($absenHariIni && $absenHariIni->waktu_absen) {
+
+            $jamMasuk     = Carbon::createFromTime(7, 30, 0, 'Asia/Jakarta');
+            $jamTerlambat = Carbon::createFromTime(8, 0, 0, 'Asia/Jakarta');
+
+            $waktuMasuk = Carbon::parse($absenHariIni->waktu_absen, 'Asia/Jakarta');
+
+            if ($waktuMasuk->lt($jamMasuk)) {
+                $menitDatang = -1 * $waktuMasuk->diffInMinutes($jamMasuk);
+            } elseif ($waktuMasuk->between($jamMasuk, $jamTerlambat)) {
+                $menitDatang = $waktuMasuk->diffInMinutes($jamMasuk);
+            } else {
+                $menitDatang = $waktuMasuk->diffInMinutes($jamTerlambat) + 30;
+            }
+        }
+
+        /**
+         * 4. RIWAYAT
+         */
         $riwayat = Absensi::where('user_id', $userId)
             ->orderBy('waktu_absen', 'desc')
             ->take(10)
@@ -51,6 +72,8 @@ class AbsensiController extends Controller
             'riwayat'        => $riwayat,
             'statusHariIni'  => $statusHariIni,
             'totalBulanIni'  => $totalBulanIni,
+            'menitDatang'    => $menitDatang,
+            'absenHariIni'   => $absenHariIni,
         ]);
     }
 }

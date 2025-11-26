@@ -9,12 +9,18 @@ class Absensi extends Model
 {
     use HasFactory;
 
+    protected $table = 'absensis'; // pakai sesuai nama tabelmu, kalau 'absensis' atau 'absensis' sesuaikan
     protected $fillable = [
-        'user_id', 'waktu_absen', 'status', 'ip_address'
+        'user_id',
+        'tanggal',
+        'waktu_absen',
+        'status',
+        'metode',
+        'ip_address',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

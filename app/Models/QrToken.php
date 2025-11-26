@@ -2,13 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class QrToken extends Model
 {
-    protected $fillable = ['token','expired_at','status'];
+    use HasFactory;
 
-    protected $casts = [
-        'expired_at' => 'datetime',
+    protected $fillable = [
+        'token',
+        'expired_at',
+        'status',
+    ];
+
+    protected $dates = [
+        'expired_at',
     ];
 }

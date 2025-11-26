@@ -1,0 +1,9 @@
+admin harus bisa peserta baru
+kedua dashboard tidak berubah otomatis ketika user sudah absen
+angka berapa menit awal dia masuk itu belum ada
+upgrate kedua tampilan tersebut sama tambahkan fitur yg menurut mu itu cocok
+kita masi belum bisa mampilin qr alias putih dengan tulisan "gagal menampilkan camera camera streaming no supported by the browser"pas udh login di hp sebagai user
+gini aja deh simulasinya kalau kamu sebagai user itu ngebutuhin pitur apa dan yg enak buat kamu apa
+nah sebaiknya juga gitu kalau kamu login sebagai admin fitur apa yg ngemudahin kamu buat ngontrol siswa yg absen itu dengan segala macam fitur yg tertera di dashboard admin
+buat fitur agar tabel absensi bisa difilter dan juga diexport ke excel
+buatkan fitur dashboard admin ini bisa digunakan di dekstop dan juga mobile

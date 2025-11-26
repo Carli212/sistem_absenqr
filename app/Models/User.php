@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class User extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'nama',
         'tanggal_lahir',
         'ip_address',
-        'foto',        // 🟢 WAJIB ADA
-    ];
-
-    // Jangan pakai date cast, karena format kamu dd/mm/yyyy → string saja
-    protected $casts = [
-        'tanggal_lahir' => 'string'
+        'foto',
     ];
 }

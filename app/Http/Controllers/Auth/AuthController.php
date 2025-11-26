@@ -21,29 +21,44 @@ class AuthController extends Controller
             'tanggal_lahir' => 'required|string',
         ]);
 
-        // Cocokkan string, karena DB kamu dd/mm/yyyy
-        $user = User::where('nama', $request->nama)
-                    ->where('tanggal_lahir', $request->tanggal_lahir)
-                    ->first();
+        $ipNow = $request->ip();
+
+        // cari user sesuai input (case-insensitive lebih aman)
+        $user = User::whereRaw('LOWER(nama) = ?', [strtolower($request->nama)])
+            ->where('tanggal_lahir', $request->tanggal_lahir)
+            ->first();
 
         if (!$user) {
             return back()->with('error', 'Nama atau tanggal lahir tidak cocok.')
-                         ->withInput();
+                ->withInput();
         }
 
-        // Simpan IP Address
+        // Jika kolom ip_address ada, cek aturan 1 IP = 1 akun (opsional)
         if (Schema::hasColumn('users', 'ip_address')) {
-            $user->ip_address = $request->ip();
-            $user->save();
+            $other = User::where('ip_address', $ipNow)
+                ->where('id', '<>', $user->id)
+                ->first();
+
+            if ($other) {
+                return back()->with('error', 'Perangkat ini sudah terdaftar untuk akun lain. Hubungi admin.')
+                    ->withInput();
+            }
+
+            // simpan ip ke user jika kosong
+            if (empty($user->ip_address)) {
+                $user->ip_address = $ipNow;
+                $user->save();
+            }
         }
 
         // Simpan session
         session([
             'siswa_id'   => $user->id,
             'siswa_nama' => $user->nama,
-            'ip_address' => $user->ip_address,
+            'ip_address' => $user->ip_address ?? $ipNow,
         ]);
 
+        // PENTING: redirect ke halaman scan (bukan langsung dashboard)
         return redirect()->route('user.scan');
     }
 

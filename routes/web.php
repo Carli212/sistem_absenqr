@@ -23,7 +23,8 @@ use App\Http\Controllers\ProfileController;
 | DEFAULT → Arahkan ke Login Siswa
 |--------------------------------------------------------------------------
 */
-Route::get('/', function() {
+
+Route::get('/', function () {
     return redirect()->route('login.siswa.show');
 });
 
@@ -97,6 +98,11 @@ Route::post('/admin/login', [AdminAuthController::class, 'processLoginAdmin'])
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
+    // API grafik (last N days, default 7)
+    Route::get('/graph/json', [AdminController::class, 'graphJson'])->name('admin.graph.json');
+
+    // (sudah ada) API ambil absensi hari ini:
+    Route::get('/absensi/json', [AdminController::class, 'absensiTodayJson'])->name('admin.absensi.json');
 
     // Dashboard Admin
     Route::get('/dashboard', [AdminController::class, 'dashboard'])
@@ -123,6 +129,14 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::delete('/absensi-manual/{id}', [AdminController::class, 'deleteAbsensiManual'])
         ->name('admin.absensi.manual.delete');
+    // route untuk API ambil absensi hari ini (admin polling)
+    Route::get('/absensi/json', [AdminController::class, 'absensiTodayJson'])->name('admin.absensi.json');
+
+    // route tampilkan form tambah user
+    Route::get('/create-user', [AdminController::class, 'showCreateUser'])->name('admin.user.create');
+
+    // route simpan user baru
+    Route::post('/create-user', [AdminController::class, 'storeUser'])->name('admin.user.store');
 
     // Logout Admin
     Route::post('/logout', [AdminAuthController::class, 'logoutAdmin'])

@@ -1,49 +1,64 @@
-@extends('layouts.main')
+@extends('admin.layout')
+
+@section('title', 'QR Code Absensi | Sistem Absensi QR')
+@section('pageTitle', 'QR Code Absensi')
 
 @section('content')
-<h2 class="text-2xl font-bold text-center text-green-700 mb-4">QR Code Absensi</h2>
 
-<div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow text-center">
+<div class="max-w-xl mx-auto bg-white border border-gray-100 shadow-md rounded-2xl p-6 text-center space-y-5">
 
-    <p class="text-gray-600 mb-3">QR akan berubah setiap 5 menit.</p>
+    <h2 class="text-xl font-bold text-green-700">QR Absensi (5 Menit Sekali)</h2>
 
-    <div id="qrWrap" class="inline-block bg-gray-50 p-4 rounded-lg shadow text-center">
-        <!-- SVG akan masuk otomatis -->
-        <p class="text-gray-400">Memuat QR...</p>
+    <p class="text-gray-600 text-sm">
+        QR Code ini otomatis berubah setiap <b>5 menit</b>.  
+        Siswa harus memindai QR ini untuk melakukan absensi.
+    </p>
+
+    {{-- QR Box --}}
+    <div class="flex justify-center">
+        <div id="qrWrap" class="bg-gray-50 border rounded-xl p-5 shadow-inner">
+            <p class="text-gray-400 text-sm">Memuat QR...</p>
+        </div>
     </div>
 
-    <p id="expireText" class="mt-3 text-sm text-gray-500"></p>
+    {{-- Expire Info --}}
+    <p id="expireText" class="text-sm text-gray-500"></p>
 
-    <div class="mt-4">
-        <a href="{{ route('admin.dashboard') }}" class="bg-gray-200 px-4 py-2 rounded">
+    {{-- Back Button --}}
+    <div>
+        <a href="{{ route('admin.dashboard') }}"
+           class="inline-block px-5 py-2.5 bg-gray-200 rounded-lg text-gray-700 font-medium
+                  hover:bg-gray-300 transition">
             ⬅ Kembali
         </a>
     </div>
 
 </div>
 
+
+{{-- SCRIPT --}}
 <script>
 async function fetchQr() {
     try {
         const res = await fetch("{{ route('admin.qr.json') }}");
         const data = await res.json();
 
-        // decode base64 → SVG → render di html
-        document.getElementById('qrWrap').innerHTML =
-            atob(data.svg);
+        // Base64 decode → SVG
+        document.getElementById('qrWrap').innerHTML = atob(data.svg);
 
         document.getElementById('expireText').innerText =
-            'Kadaluarsa: ' + data.expired_at;
+            "Kadaluarsa pada: " + data.expired_at;
 
-    } catch (e) {
-        console.error('QR ERROR:', e);
+    } catch (err) {
+        console.error("QR Fetch Error:", err);
     }
 }
 
-// pertama ambil QR
+// Ambil QR saat halaman dibuka
 fetchQr();
 
-// auto refresh tiap 1 menit
+// Refresh setiap 1 menit
 setInterval(fetchQr, 60000);
 </script>
+
 @endsection
