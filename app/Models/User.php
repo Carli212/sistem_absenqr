@@ -11,8 +11,13 @@ class User extends Model
 
     protected $fillable = [
         'nama',
+        'password',
         'tanggal_lahir',
         'ip_address',
         'foto',
+    ];
+
+    protected $hidden = [
+        'password'
     ];
 }

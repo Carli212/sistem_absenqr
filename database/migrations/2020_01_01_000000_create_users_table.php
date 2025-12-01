@@ -1,23 +1,19 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration {
-    public function up(): void
-    {
+    public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('tanggal_lahir'); // disimpan dd/mm/yyyy
+            $table->date('tanggal_lahir')->nullable();
             $table->string('ip_address')->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }
-
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('users');
     }
 };

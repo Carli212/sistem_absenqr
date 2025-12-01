@@ -12,6 +12,7 @@
     <div class="bg-white shadow-xl rounded-2xl w-full 
             max-w-[200px] p-4 text-gray-700 border border-blue-200"
         style="backdrop-filter: blur(2px);">
+        
         <!-- Header -->
         <div class="text-center mb-5">
             <img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
@@ -46,36 +47,36 @@
                     required>
             </div>
 
-            <!-- Input Tanggal Lahir -->
+            <!-- Input Password -->
             <div class="relative">
                 <span class="absolute left-3 top-2.5 text-blue-400">
-                    <i class="fa-solid fa-calendar-days text-xs"></i>
+                    <i class="fa-solid fa-lock text-xs"></i>
                 </span>
                 <input
-                    type="date"
-                    name="tanggal_lahir"
-                    value="{{ old('tanggal_lahir') }}"
-                    class="w-full pl-8 pr-3 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700 text-xs"
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    class="w-full pl-8 pr-3 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700 placeholder-gray-400 text-xs"
                     required>
             </div>
 
-            <!-- Tombol Mulai Absen --><!-- Tombol Mulai Absen -->
+            <!-- Tombol Maju -->
             <div class="pt-2 text-center">
                 <button
                     type="submit"
                     style="
-            width: 100%;
-            background: linear-gradient(90deg, #007BFF 0%, #0062E6 100%);
-            color: white;
-            padding: 10px 0;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 98, 230, 0.4);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        "
+                        width: 100%;
+                        background: linear-gradient(90deg, #007BFF 0%, #0062E6 100%);
+                        color: white;
+                        padding: 10px 0;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        font-size: 14px;
+                        border: none;
+                        box-shadow: 0 4px 12px rgba(0, 98, 230, 0.4);
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    "
                     onmouseover="this.style.background='linear-gradient(90deg, #006AE3 0%, #004ECC 100%)'"
                     onmouseout="this.style.background='linear-gradient(90deg, #007BFF 0%, #0062E6 100%)'"
                     onmousedown="this.style.transform='scale(0.97)'"
@@ -92,6 +93,5 @@
         </p>
     </div>
 </div>
-<!-- Font Awesome -->
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 @endsection

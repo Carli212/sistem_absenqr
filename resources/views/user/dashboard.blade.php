@@ -1,87 +1,216 @@
 @extends('layouts.main')
-@section('title', 'Dashboard Siswa | Sistem Absensi QR')
+@section('title', 'Dashboard Siswa | Absensi QR')
 
 @section('content')
-<div class="min-h-screen p-6 bg-gray-50">
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-800">Halo, {{ session('siswa_nama') }}</h2>
-                    <p class="text-sm text-gray-500">Status hari ini: <strong>{{ $statusHariIni ?? 'Belum Absen' }}</strong></p>
-                </div>
-                <div class="text-right">
-                    <div class="text-sm text-gray-500">Hadir bulan ini</div>
-                    <div class="text-2xl font-bold text-green-600">{{ $totalBulanIni ?? 0 }}</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Ringkasan menit datang -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white rounded-xl shadow p-4">
-                <div class="text-sm text-gray-500">Menit datang (negatif = datang awal)</div>
-                <div class="text-xl font-semibold mt-2">
-                    @if($menitDatang === null)
-                        -
-                    @else
-                        {{ $menitDatang }} menit
-                    @endif
-                </div>
-            </div>
+<style>
+/* ===========================
+   GLOBAL STYLE 
+=========================== */
+body {
+    background: linear-gradient(135deg, #4f46e5, #8b5cf6) !important;
+}
 
-            <div class="bg-white rounded-xl shadow p-4">
-                <div class="text-sm text-gray-500">Absensi hari ini</div>
-                <div class="text-xl font-semibold mt-2">
-                    @if($absenHariIni)
-                        {{ ucfirst($absenHariIni->status) }} pada {{ \Carbon\Carbon::parse($absenHariIni->waktu_absen, 'Asia/Jakarta')->format('H:i:s') }}
-                    @else
-                        Belum absen
-                    @endif
-                </div>
-            </div>
+/* Card styling */
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
 
-            <div class="bg-white rounded-xl shadow p-4">
-                <div class="text-sm text-gray-500">Aksi</div>
-                <div class="mt-2">
-                    <a href="{{ route('user.scan') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">Scan QR</a>
-                    <form action="{{ route('logout') }}" method="POST" class="inline-block ml-2">
-                        @csrf
-                        <button type="submit" class="bg-red-500 text-white px-3 py-2 rounded-lg text-sm">Logout</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+/* Foto profil */
+.profile-pic {
+    width: 85px;
+    height: 85px;
+    border-radius: 16px;
+    object-fit: cover;
+    background: #d1d5db;
+}
 
-        <!-- Riwayat -->
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="font-semibold mb-4">Riwayat Absensi Terakhir</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-3 text-left">Tanggal / Waktu</th>
-                            <th class="p-3 text-left">Status</th>
-                            <th class="p-3 text-left">Metode</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($riwayat as $r)
-                            <tr class="border-t">
-                                <td class="p-3">{{ \Carbon\Carbon::parse($r->waktu_absen, 'Asia/Jakarta')->format('d M Y H:i') }}</td>
-                                <td class="p-3">{{ ucfirst($r->status) }}</td>
-                                <td class="p-3">{{ $r->metode }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="p-3 text-center text-gray-500">Belum ada riwayat absensi</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+/* Status badge */
+.badge-status {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
 
+.badge-hadir { background: #d1fae5; color: #065f46; }
+.badge-terlambat { background: #fef3c7; color: #92400e; }
+.badge-sakit, .badge-izin { background: #e0e7ff; color: #3730a3; }
+.badge-alpha { background: #fee2e2; color: #b91c1c; }
+
+/* Scan button floating (mobile) */
+.scan-floating {
+    position: fixed;
+    bottom: 22px;
+    right: 20px;
+    background: linear-gradient(135deg,#4f46e5,#8b5cf6);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    padding: 16px 20px;
+    border-radius: 50px;
+    color: white;
+    font-weight: bold;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .scan-floating { 
+        display: block;
+        z-index: 50;
+    }
+}
+
+/* Desktop scan button */
+.btn-scan-desktop {
+    background: #4f46e5;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.btn-scan-desktop:hover {
+    background: #4338ca;
+}
+
+/* Logout */
+.logout-btn {
+    background: #ef4444;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+/* Kalender */
+.calendar-box {
+    border-radius: 18px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+/* Tabel Riwayat */
+.table-container {
+    overflow-x: auto;
+}
+
+.table-history {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-history th {
+    background: #f3f4f6;
+    padding: 12px;
+    text-align: left;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #374151;
+}
+
+.table-history td {
+    padding: 12px;
+    background: white;
+    border-bottom: 1px solid #f3f4f6;
+}
+</style>
+
+<div class="max-w-5xl mx-auto p-4 mt-6 space-y-6 text-gray-900">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold text-white drop-shadow">
+            Dashboard, {{ session('siswa_nama') }}
+        </h2>
+
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button class="logout-btn">Logout</button>
+        </form>
     </div>
+
+    <!-- CARD PROFIL & STATUS -->
+    <div class="card grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Foto profil -->
+        <img src="{{ $foto ?? '/default-avatar.png' }}" class="profile-pic">
+
+        <!-- Status Today -->
+        <div class="md:col-span-2">
+            <p class="font-bold text-gray-800 text-lg">Absensi hari ini</p>
+
+            <p class="text-sm mt-1">
+                Status: 
+                <span class="badge-status 
+                    @if($status == 'hadir') badge-hadir
+                    @elseif($status == 'terlambat') badge-terlambat
+                    @elseif($status == 'izin') badge-izin
+                    @elseif($status == 'sakit') badge-sakit
+                    @else badge-alpha @endif">
+                    {{ ucfirst($status) }}
+                </span>
+            </p>
+
+            <p class="mt-2 font-semibold text-gray-700">
+                {{ ucfirst($status) }} pada {{ $jam_absen }}
+            </p>
+
+            <p class="text-gray-500 text-sm mt-1">
+                Menit datang (negatif = datang awal):  
+                <b>{{ $selisihMenit }} menit</b>
+            </p>
+        </div>
+    </div>
+
+    <!-- KALENDER -->
+    <div class="calendar-box">
+        <p class="font-semibold text-gray-700 mb-1">Kalender</p>
+        <p class="text-gray-900 text-lg font-bold">
+            {{ \Carbon\Carbon::now()->translatedFormat('D, d M Y') }}
+        </p>
+    </div>
+
+    <!-- RIWAYAT ABSENSI -->
+    <div class="card">
+        <h3 class="font-bold text-lg mb-3">Riwayat Absensi Terakhir</h3>
+
+        <div class="table-container">
+            <table class="table-history">
+                <thead>
+                    <tr>
+                        <th>Tanggal / Waktu</th>
+                        <th>Status</th>
+                        <th>Metode</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($riwayat as $r)
+                    <tr>
+                        <td>{{ $r->tanggal }} {{ \Carbon\Carbon::parse($r->waktu_absen)->format('H:i') }}</td>
+                        <td>{{ ucfirst($r->status) }}</td>
+                        <td>{{ strtoupper($r->metode) }}</td>
+                        <td>{{ $r->ip_address }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
+
+<!-- FLOATING SCAN BUTTON (mobile only) -->
+<a href="{{ route('user.scan') }}" class="scan-floating">
+    📷 Scan QR
+</a>
+
 @endsection

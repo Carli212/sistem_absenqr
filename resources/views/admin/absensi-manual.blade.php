@@ -21,27 +21,30 @@
             </div>
         @endif
 
-        @if (session('error'))
-            <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 font-semibold">
-                {{ session('error') }}
+        @if ($errors->any())
+            <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700">
+                <b>Terjadi kesalahan:</b>
+                <ul class="list-disc ml-4 mt-2 text-sm">
+                    @foreach ($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
         <form action="{{ route('admin.absensi.manual.store') }}" method="POST"
-              class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
             @csrf
 
             {{-- Siswa --}}
-            <div class="md:col-span-1">
+            <div class="md:col-span-2">
                 <label class="text-sm font-semibold text-gray-700">Pilih Siswa</label>
                 <select name="user_id"
                         class="w-full mt-1 border rounded-lg p-2 shadow-sm focus:ring-blue-300"
                         required>
                     <option value="">-- Pilih Siswa --</option>
                     @foreach($users as $u)
-                        <option value="{{ $u->id }}">
-                            {{ $u->nama }} ({{ $u->tanggal_lahir }})
-                        </option>
+                        <option value="{{ $u->id }}">{{ $u->nama }}</option>
                     @endforeach
                 </select>
             </div>
@@ -50,7 +53,7 @@
             <div>
                 <label class="text-sm font-semibold text-gray-700">Tanggal</label>
                 <input type="date" name="tanggal"
-                       value="{{ old('tanggal', \Carbon\Carbon::today('Asia/Jakarta')->toDateString()) }}"
+                       value="{{ date('Y-m-d') }}"
                        class="w-full mt-1 border rounded-lg p-2 shadow-sm focus:ring-blue-300"
                        required>
             </div>
@@ -71,7 +74,7 @@
             </div>
 
             {{-- Submit --}}
-            <div class="text-right md:col-span-1">
+            <div class="text-right">
                 <button class="px-5 py-2.5 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
                     Simpan
                 </button>
@@ -84,9 +87,7 @@
     {{-- DAFTAR ABSENSI --}}
     <div class="bg-white rounded-xl shadow border border-gray-100 p-6">
 
-        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-            📋 Daftar Absensi Manual
-        </h2>
+        <h2 class="text-lg font-bold mb-4">📋 Daftar Absensi Manual</h2>
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm border-collapse">
@@ -104,12 +105,15 @@
                 <tbody>
                     @forelse($absensi as $item)
                         <tr class="border-b hover:bg-gray-50">
+
                             <td class="p-3">{{ $item->user->nama }}</td>
 
+                            {{-- FIXED Tanggal --}}
                             <td class="p-3">
-                                {{ optional($item->tanggal)->format('d/m/Y') }}
+                                {{ $item->tanggal ? date('d/m/Y', strtotime($item->tanggal)) : '-' }}
                             </td>
 
+                            {{-- FIXED Status --}}
                             <td class="p-3">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold
                                     @if($item->status == 'hadir') bg-green-100 text-green-700
@@ -120,12 +124,14 @@
                                 </span>
                             </td>
 
-                            <td class="p-3">{{ ucfirst($item->metode ?? 'manual') }}</td>
-
+                            {{-- FIXED Metode --}}
                             <td class="p-3">
-                                {{ $item->waktu_absen
-                                    ? \Carbon\Carbon::parse($item->waktu_absen)->format('H:i:s')
-                                    : '-' }}
+                                {{ $item->metode ? ucfirst($item->metode) : 'Manual' }}
+                            </td>
+
+                            {{-- FIXED Waktu --}}
+                            <td class="p-3">
+                                {{ $item->waktu_absen ? date('H:i:s', strtotime($item->waktu_absen)) : '-' }}
                             </td>
 
                             <td class="p-3 text-center">
@@ -139,6 +145,7 @@
                                     </button>
                                 </form>
                             </td>
+
                         </tr>
                     @empty
                         <tr>
@@ -148,6 +155,7 @@
                         </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
 

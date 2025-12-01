@@ -20,10 +20,9 @@ use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
-| DEFAULT → Arahkan ke Login Siswa
+| DEFAULT → Redirect ke Login Siswa
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
     return redirect()->route('login.siswa.show');
 });
@@ -52,7 +51,7 @@ Route::post('/login-siswa', [AuthController::class, 'processLoginSiswa'])
 
 /*
 |--------------------------------------------------------------------------
-| SCAN QR (halaman + proses)
+| SCAN QR
 |--------------------------------------------------------------------------
 */
 Route::get('/scan',  [ScanQrController::class, 'showScan'])
@@ -94,25 +93,27 @@ Route::post('/admin/login', [AdminAuthController::class, 'processLoginAdmin'])
 
 /*
 |--------------------------------------------------------------------------
-| FITUR ADMIN (HARUS LOGIN ADMIN)
+| FITUR ADMIN (HARUS LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
-    // API grafik (last N days, default 7)
-    Route::get('/graph/json', [AdminController::class, 'graphJson'])->name('admin.graph.json');
-
-    // (sudah ada) API ambil absensi hari ini:
-    Route::get('/absensi/json', [AdminController::class, 'absensiTodayJson'])->name('admin.absensi.json');
 
     // Dashboard Admin
     Route::get('/dashboard', [AdminController::class, 'dashboard'])
         ->name('admin.dashboard');
 
-    // QR Code (tampilan)
+    // Grafik JSON
+    Route::get('/graph/json', [AdminController::class, 'graphJson'])
+        ->name('admin.graph.json');
+
+    // API Absensi Realtime (untuk dashboard)
+    Route::get('/absensi/json', [AdminController::class, 'absensiTodayJson'])
+        ->name('admin.absensi.json');
+
+    // QR
     Route::get('/qr', [AdminController::class, 'generateQR'])
         ->name('admin.qr');
 
-    // QR Code (JSON, untuk refresh otomatis)
     Route::get('/qr/json', [AdminController::class, 'qrJson'])
         ->name('admin.qr.json');
 
@@ -129,16 +130,15 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::delete('/absensi-manual/{id}', [AdminController::class, 'deleteAbsensiManual'])
         ->name('admin.absensi.manual.delete');
-    // route untuk API ambil absensi hari ini (admin polling)
-    Route::get('/absensi/json', [AdminController::class, 'absensiTodayJson'])->name('admin.absensi.json');
 
-    // route tampilkan form tambah user
-    Route::get('/create-user', [AdminController::class, 'showCreateUser'])->name('admin.user.create');
+    // Tambah user
+    Route::get('/create-user', [AdminController::class, 'showCreateUser'])
+        ->name('admin.user.create');
 
-    // route simpan user baru
-    Route::post('/create-user', [AdminController::class, 'storeUser'])->name('admin.user.store');
+    Route::post('/create-user', [AdminController::class, 'storeUser'])
+        ->name('admin.user.store');
 
-    // Logout Admin
+    // Logout admin
     Route::post('/logout', [AdminAuthController::class, 'logoutAdmin'])
         ->name('admin.logout');
 });

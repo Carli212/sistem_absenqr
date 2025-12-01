@@ -10,37 +10,109 @@
         align-items: center;
         justify-content: center;
         padding: 24px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(180deg, 
+            #87CEEB 0%,
+            #98D8E8 25%,
+            #7EC8E3 50%,
+            #5FB3D1 75%,
+            #4A9AB0 100%
+        );
         position: relative;
         overflow: hidden;
     }
 
+    /* Matahari */
     .login-container::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: float 20s ease-in-out infinite;
+        top: 10%;
+        right: 15%;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, #FFE66D 0%, #FFB347 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 60px rgba(255, 230, 109, 0.6);
+        animation: sunshine 3s ease-in-out infinite;
     }
 
+    @keyframes sunshine {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.9; }
+    }
+
+    /* Awan 1 */
     .login-container::after {
         content: '';
         position: absolute;
-        bottom: -50%;
-        left: -50%;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-        animation: float 25s ease-in-out infinite reverse;
+        top: 15%;
+        left: 10%;
+        width: 200px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50px;
+        box-shadow: 
+            80px 20px 0 -10px rgba(255, 255, 255, 0.6),
+            150px 10px 0 -5px rgba(255, 255, 255, 0.5);
+        animation: floatCloud 30s ease-in-out infinite;
+    }
+
+    @keyframes floatCloud {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(30px); }
     }
 
     @keyframes float {
         0%, 100% { transform: translate(0, 0) rotate(0deg); }
         33% { transform: translate(30px, -30px) rotate(120deg); }
         66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+
+    /* Awan 2 */
+    .cloud-2 {
+        position: absolute;
+        top: 30%;
+        right: 20%;
+        width: 150px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 40px;
+        box-shadow: 
+            60px 15px 0 -8px rgba(255, 255, 255, 0.5);
+        animation: floatCloud2 35s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    @keyframes floatCloud2 {
+        0%, 100% { transform: translateX(0) translateY(0); }
+        50% { transform: translateX(-40px) translateY(10px); }
+    }
+
+    /* Pegunungan */
+    .mountains {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40%;
+        background: 
+            linear-gradient(135deg, transparent 50%, #2d5f3f 50%) 0 0,
+            linear-gradient(-135deg, transparent 50%, #3a7754 50%) 0 0,
+            linear-gradient(45deg, transparent 50%, #4a9668 50%) 100% 0,
+            linear-gradient(-45deg, transparent 50%, #5db07d 50%) 100% 0;
+        background-size: 25% 100%, 25% 100%, 25% 100%, 25% 100%;
+        background-repeat: no-repeat;
+        z-index: 0;
+    }
+
+    /* Rumput */
+    .grass {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(180deg, #5db07d 0%, #4a9668 100%);
+        z-index: 0;
     }
 
     .login-card {
@@ -75,19 +147,19 @@
         width: 80px;
         height: 80px;
         margin: 0 auto 20px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #5db07d 0%, #3a7754 100%);
         border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 36px;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 20px rgba(93, 176, 125, 0.4);
     }
 
     .login-title {
         font-size: 28px;
         font-weight: 900;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3a7754 0%, #2d5f3f 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -129,9 +201,9 @@
 
     .form-input:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #5db07d;
         background: white;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 4px rgba(93, 176, 125, 0.1);
     }
 
     .form-input::placeholder {
@@ -194,7 +266,7 @@
     .submit-btn {
         width: 100%;
         padding: 16px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #5db07d 0%, #3a7754 100%);
         color: white;
         border: none;
         border-radius: 12px;
@@ -202,14 +274,14 @@
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 14px rgba(93, 176, 125, 0.4);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     .submit-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        box-shadow: 0 6px 20px rgba(93, 176, 125, 0.5);
     }
 
     .submit-btn:active {
@@ -244,6 +316,13 @@
 </style>
 
 <div class="login-container">
+    <!-- Awan tambahan -->
+    <div class="cloud-2"></div>
+    <!-- Pegunungan -->
+    <div class="mountains"></div>
+    <!-- Rumput -->
+    <div class="grass"></div>
+
     <div class="login-card">
         
         <div class="login-header">

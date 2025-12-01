@@ -8,50 +8,48 @@ use App\Models\Absensi;
 use App\Models\QrToken;
 use Carbon\Carbon;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
-    // =====================================================
-    // 📌 DASHBOARD ADMIN
-    // =====================================================
+    // DASHBOARD ADMIN
     public function dashboard()
     {
         $totalSiswa = User::count();
+        $today = Carbon::today('Asia/Jakarta')->toDateString();
 
+        // ambil absensi hari ini berdasarkan waktu_absen (source of truth)
         $absensiHariIni = Absensi::with('user')
-            ->whereDate('waktu_absen', Carbon::today('Asia/Jakarta'))
+            ->whereDate('waktu_absen', $today)
             ->orderBy('waktu_absen', 'asc')
             ->get();
 
-        $hadir = $absensiHariIni->whereIn('status', ['hadir', 'terlambat'])->count();
+        // hitung hadir (hadir + terlambat)
+        $hadir = Absensi::whereDate('waktu_absen', $today)
+            ->whereIn('status', ['hadir', 'terlambat'])
+            ->count();
 
-        return view('admin.dashboard', compact(
-            'totalSiswa',
-            'hadir',
-            'absensiHariIni'
-        ));
+        return view('admin.dashboard', compact('totalSiswa', 'hadir', 'absensiHariIni'));
     }
 
-    // =====================================================
-    // 📌 QR PAGE
-    // =====================================================
+    // TAMPILKAN HALAMAN QR
     public function generateQR()
     {
         return view('admin.qr');
     }
 
-    // =====================================================
-    // 📌 QR JSON (Auto Refresh)
-    // =====================================================
+    // API: Buat token QR (JSON) untuk polling di view admin.qr
     public function qrJson()
     {
         $kode = rand(100000, 999999);
 
+        // generate SVG QR (string)
         $svgRaw = QrCode::size(300)->generate($kode);
         $svgBase64 = base64_encode($svgRaw);
 
         QrToken::create([
-            'token' => $kode,
+            'token' => (string) $kode,
             'expired_at' => now('Asia/Jakarta')->addMinutes(5),
             'status' => 'aktif'
         ]);
@@ -59,35 +57,35 @@ class AdminController extends Controller
         return response()->json([
             'code' => $kode,
             'svg' => $svgBase64,
-            'expired_at' => now('Asia/Jakarta')->addMinutes(5)->format('H:i:s'),
+            'expired_at' => now('Asia/Jakarta')->addMinutes(5)->format('Y-m-d H:i:s'),
         ]);
     }
 
-    // =====================================================
-    // 📌 API ABSENSI TODAY JSON
-    // =====================================================
+    // API: Ambil absensi hari ini (dipakai polling tabel di dashboard admin)
     public function absensiTodayJson()
     {
+        $today = Carbon::today('Asia/Jakarta')->toDateString();
+
         $absensi = Absensi::with('user')
-            ->whereDate('waktu_absen', Carbon::today('Asia/Jakarta'))
+            ->whereDate('waktu_absen', $today)
             ->orderBy('waktu_absen', 'asc')
             ->get()
             ->map(function ($a) {
                 return [
+                    'id' => $a->id,
                     'nama' => $a->user->nama ?? '-',
+                    'tanggal_lahir' => $a->user->tanggal_lahir ?? '-',
                     'status' => ucfirst($a->status),
-                    'waktu' => $a->waktu_absen
-                        ? Carbon::parse($a->waktu_absen)->format('H:i:s')
-                        : '-',
+                    'waktu' => $a->waktu_absen ? Carbon::parse($a->waktu_absen, 'Asia/Jakarta')->format('H:i:s') : '-',
+                    'ip' => $a->ip_address ?? '-',
+                    'metode' => $a->metode ?? '-',
                 ];
             });
 
         return response()->json(['data' => $absensi]);
     }
 
-    // =====================================================
-    // 📝 FORM ABSENSI MANUAL
-    // =====================================================
+    // TAMPILAN FORM ABSENSI MANUAL
     public function showAbsensiManual()
     {
         $users = User::orderBy('nama')->get();
@@ -99,21 +97,24 @@ class AdminController extends Controller
         return view('admin.absensi-manual', compact('users', 'absensi'));
     }
 
-    // =====================================================
-    // 📝 SIMPAN ABSENSI MANUAL
-    // =====================================================
+    // SIMPAN ABSENSI MANUAL (gunakan timezone Asia/Jakarta agar whereDate konsisten)
     public function storeAbsensiManual(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|integer',
+            'user_id' => 'required|integer|exists:users,id',
             'tanggal' => 'required|date',
             'status' => 'required|in:hadir,terlambat,alpha,izin,sakit,manual',
         ]);
 
+        // gunakan waktu saat ini (Asia/Jakarta) tetapi tetap pada tanggal yang diinput
+        $timeNow = now('Asia/Jakarta')->format('H:i:s');
+        $waktuAbsen = Carbon::createFromFormat('Y-m-d H:i:s', $request->tanggal . ' ' . $timeNow, 'Asia/Jakarta')
+            ->toDateTimeString();
+
         Absensi::create([
             'user_id' => $request->user_id,
             'tanggal' => $request->tanggal,
-            'waktu_absen' => $request->tanggal . ' 00:00:00',
+            'waktu_absen' => $waktuAbsen,
             'status' => $request->status,
             'metode' => 'manual',
             'ip_address' => null,
@@ -122,93 +123,115 @@ class AdminController extends Controller
         return back()->with('success', 'Absensi manual berhasil ditambahkan.');
     }
 
-    // =====================================================
-    // 🗑 HAPUS ABSENSI MANUAL
-    // =====================================================
+    // HAPUS ABSENSI MANUAL
     public function deleteAbsensiManual($id)
     {
-        Absensi::findOrFail($id)->delete();
+        $abs = Absensi::findOrFail($id);
+        $abs->delete();
 
         return back()->with('success', 'Data absensi berhasil dihapus.');
     }
 
-    // =====================================================
-    // ➕ FORM TAMBAH USER
-    // =====================================================
+    // FORM TAMBAH USER
     public function showCreateUser()
     {
         return view('admin.create-user');
     }
 
-    // =====================================================
-    // ➕ SIMPAN USER BARU
-    // =====================================================
+    // SIMPAN USER (mendukung password manual atau auto-generate)
     public function storeUser(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|max:191',
-            'tanggal_lahir' => 'required|string',
+            // password optional: jika disediakan harus min 4, jika tidak maka auto-generate
+            'password' => 'nullable|string|min:4',
+            'tanggal_lahir' => 'nullable|date',
+            'status' => 'nullable|in:aktif,lulus',
         ]);
 
-        User::create([
+        // jika admin tidak mengisi password, auto-generate yang mudah diingat (8 chars)
+        $plainPassword = $request->password;
+        if (empty($plainPassword)) {
+            $plainPassword = Str::random(8); // contoh: 'A1b2C3d4'
+        }
+
+        $user = User::create([
             'nama' => $request->nama,
+            'password' => Hash::make($plainPassword),
             'tanggal_lahir' => $request->tanggal_lahir,
+            // simpan status bila kolom tersedia di DB (jika tidak, field akan diabaikan)
             'ip_address' => null,
             'foto' => null,
         ]);
 
+        // beri informasi password plain ke admin lewat session flash (hanya sekali tampil)
         return redirect()->route('admin.dashboard')
-            ->with('success', 'Siswa baru berhasil ditambahkan.');
+            ->with('success', 'Siswa baru berhasil ditambahkan.')
+            ->with('new_user_id', $user->id)
+            ->with('new_user_password', $plainPassword);
     }
 
-    // =====================================================
-    // 📌 REKAP ABSENSI — INI YANG HILANG!
-    // =====================================================
+    // REKAP ABSENSI HARIAN (view)
     public function rekap(Request $request)
     {
         $tanggal = $request->tanggal ?? now('Asia/Jakarta')->toDateString();
 
         $rekap = Absensi::with('user')
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('waktu_absen')
+            ->whereDate('waktu_absen', $tanggal)
+            ->orderBy('waktu_absen', 'asc')
             ->get();
 
-        return view('admin.rekap', compact('rekap'));
+        return view('admin.rekap', compact('rekap', 'tanggal'));
     }
 
-    // =====================================================
-    // 📉 GRAPH JSON
-    // =====================================================
+    // GRAPH JSON: earliest/latest (minutes from midnight) per day (default last 7 days)
     public function graphJson(Request $request)
     {
-        $days = $request->days ?? 7;
-
+        $days = intval($request->get('days', 7));
+        $days = max(1, min(30, $days)); // batasi 1..30
         $labels = [];
         $earliest = [];
         $latest = [];
+        $earliestNames = [];
+        $latestNames = [];
 
-        for ($i = 0; $i < $days; $i++) {
-            $date = Carbon::today('Asia/Jakarta')->subDays($i);
+        $today = Carbon::today('Asia/Jakarta');
+
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = $today->copy()->subDays($i);
             $labels[] = $date->format('d M');
 
-            $absensi = Absensi::whereDate('waktu_absen', $date)->get();
+            $absForDay = Absensi::with('user')
+                ->whereDate('waktu_absen', $date->toDateString())
+                ->orderBy('waktu_absen', 'asc')
+                ->get();
 
-            if ($absensi->count()) {
-                $first = $absensi->min('waktu_absen');
-                $last  = $absensi->max('waktu_absen');
-
-                $earliest[] = Carbon::parse($first)->diffInMinutes('00:00');
-                $latest[]   = Carbon::parse($last)->diffInMinutes('00:00');
-            } else {
+            if ($absForDay->isEmpty()) {
                 $earliest[] = null;
-                $latest[]   = null;
+                $latest[] = null;
+                $earliestNames[] = null;
+                $latestNames[] = null;
+            } else {
+                $first = $absForDay->first();
+                $last = $absForDay->last();
+
+                $tE = Carbon::parse($first->waktu_absen, 'Asia/Jakarta');
+                $tL = Carbon::parse($last->waktu_absen, 'Asia/Jakarta');
+
+                $earliest[] = $tE->hour * 60 + $tE->minute;
+                $latest[] = $tL->hour * 60 + $tL->minute;
+
+                $earliestNames[] = $first->user->nama ?? '-';
+                $latestNames[] = $last->user->nama ?? '-';
             }
         }
 
         return response()->json([
-            'labels' => array_reverse($labels),
-            'earliest' => array_reverse($earliest),
-            'latest' => array_reverse($latest)
+            'labels' => $labels,
+            'earliest' => $earliest,
+            'latest' => $latest,
+            'earliestNames' => $earliestNames,
+            'latestNames' => $latestNames,
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Absensi;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AbsensiController extends Controller
@@ -16,7 +17,11 @@ class AbsensiController extends Controller
 
         $userId = session('siswa_id');
 
-        // pakai timezone Asia/Jakarta
+        // Data user
+        $user = User::find($userId);
+        $foto = $user->foto ?? null;
+
+        // Waktu
         $today = Carbon::today('Asia/Jakarta');
         $now   = Carbon::now('Asia/Jakarta');
         $month = $now->month;
@@ -29,10 +34,50 @@ class AbsensiController extends Controller
             ->whereDate('waktu_absen', $today)
             ->first();
 
-        $statusHariIni = $absenHariIni ? ucfirst($absenHariIni->status) : 'Belum Absen';
+        // status untuk UI (hadir, terlambat, izin, sakit, alpha, belum absen)
+        $status = $absenHariIni ? strtolower($absenHariIni->status) : 'belum absen';
+
+        // Jam absen
+        $jam_absen = $absenHariIni
+            ? Carbon::parse($absenHariIni->waktu_absen)->format('H:i:s')
+            : '-';
 
         /**
-         * 2. TOTAL HADIR BULAN INI
+         * 2. HITUNG SELISIH MENIT DATANG
+         */
+        $selisihMenit = null;
+
+        if ($absenHariIni && $absenHariIni->waktu_absen) {
+
+            $waktuMasuk = Carbon::parse($absenHariIni->waktu_absen, 'Asia/Jakarta');
+            $jamMasuk     = Carbon::createFromTime(7, 30, 0, 'Asia/Jakarta');
+            $jamTerlambat = Carbon::createFromTime(8, 0, 0, 'Asia/Jakarta');
+
+            if ($waktuMasuk->lt($jamMasuk)) {
+                // Datang lebih awal (negatif)
+                $selisihMenit = -$waktuMasuk->diffInMinutes($jamMasuk);
+
+            } elseif ($waktuMasuk->between($jamMasuk, $jamTerlambat)) {
+                // Hadir normal
+                $selisihMenit = $waktuMasuk->diffInMinutes($jamMasuk);
+
+            } else {
+                // Terlambat
+                // dihitung dari 07:30 → 08:00 (30 menit) + selisih telat
+                $selisihMenit = 30 + ($waktuMasuk->diffInMinutes($jamTerlambat));
+            }
+        }
+
+        /**
+         * 3. RIWAYAT ABSENSI
+         */
+        $riwayat = Absensi::where('user_id', $userId)
+            ->orderBy('waktu_absen', 'desc')
+            ->take(10)
+            ->get();
+
+        /**
+         * 4. TOTAL HADIR BULAN INI
          */
         $totalBulanIni = Absensi::where('user_id', $userId)
             ->whereYear('waktu_absen', $year)
@@ -40,40 +85,13 @@ class AbsensiController extends Controller
             ->whereIn('status', ['hadir', 'terlambat'])
             ->count();
 
-        /**
-         * 3. HITUNG MENIT DATANG
-         */
-        $menitDatang = null;
-        if ($absenHariIni && $absenHariIni->waktu_absen) {
-
-            $jamMasuk     = Carbon::createFromTime(7, 30, 0, 'Asia/Jakarta');
-            $jamTerlambat = Carbon::createFromTime(8, 0, 0, 'Asia/Jakarta');
-
-            $waktuMasuk = Carbon::parse($absenHariIni->waktu_absen, 'Asia/Jakarta');
-
-            if ($waktuMasuk->lt($jamMasuk)) {
-                $menitDatang = -1 * $waktuMasuk->diffInMinutes($jamMasuk);
-            } elseif ($waktuMasuk->between($jamMasuk, $jamTerlambat)) {
-                $menitDatang = $waktuMasuk->diffInMinutes($jamMasuk);
-            } else {
-                $menitDatang = $waktuMasuk->diffInMinutes($jamTerlambat) + 30;
-            }
-        }
-
-        /**
-         * 4. RIWAYAT
-         */
-        $riwayat = Absensi::where('user_id', $userId)
-            ->orderBy('waktu_absen', 'desc')
-            ->take(10)
-            ->get();
-
         return view('user.dashboard', [
-            'riwayat'        => $riwayat,
-            'statusHariIni'  => $statusHariIni,
-            'totalBulanIni'  => $totalBulanIni,
-            'menitDatang'    => $menitDatang,
-            'absenHariIni'   => $absenHariIni,
+            'status'        => $status,
+            'jam_absen'     => $jam_absen,
+            'selisihMenit'  => $selisihMenit,
+            'riwayat'       => $riwayat,
+            'foto'          => $foto,
+            'totalBulanIni' => $totalBulanIni,
         ]);
     }
 }

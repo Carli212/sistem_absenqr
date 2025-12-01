@@ -20,11 +20,19 @@ class ScanQrController extends Controller
 
     public function processScan(Request $request)
     {
-        $request->validate([
-            'kode' => 'required|string'
-        ]);
+        // Ambil kode baik dari form POST maupun dari JSON body
+        $kode = $request->input('kode');
 
-        $kode = trim($request->kode);
+        if (!$kode) {
+            $payload = json_decode($request->getContent(), true);
+            $kode = $payload['kode'] ?? null;
+        }
+
+        if (!$kode) {
+            return "Kode QR tidak ditemukan";
+        }
+
+        $kode = trim($kode);
 
         $token = QrToken::where('token', $kode)
             ->where('status', 'aktif')
