@@ -17,9 +17,7 @@ return new class extends Migration {
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'foto')) {
-                $table->dropColumn('foto');
-            }
-        });
+    $table->string('foto')->nullable()->after('ip_address');
+});
     }
 };

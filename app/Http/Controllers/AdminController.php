@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -76,7 +77,9 @@ class AdminController extends Controller
                     'nama' => $a->user->nama ?? '-',
                     'tanggal_lahir' => $a->user->tanggal_lahir ?? '-',
                     'status' => ucfirst($a->status),
-                    'waktu' => $a->waktu_absen ? Carbon::parse($a->waktu_absen, 'Asia/Jakarta')->format('H:i:s') : '-',
+                    'waktu' => $a->waktu_absen
+                        ? Carbon::parse($a->waktu_absen, 'Asia/Jakarta')->format('H:i:s')
+                        : '-',
                     'ip' => $a->ip_address ?? '-',
                     'metode' => $a->metode ?? '-',
                 ];
@@ -108,8 +111,11 @@ class AdminController extends Controller
 
         // gunakan waktu saat ini (Asia/Jakarta) tetapi tetap pada tanggal yang diinput
         $timeNow = now('Asia/Jakarta')->format('H:i:s');
-        $waktuAbsen = Carbon::createFromFormat('Y-m-d H:i:s', $request->tanggal . ' ' . $timeNow, 'Asia/Jakarta')
-            ->toDateTimeString();
+        $waktuAbsen = Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $request->tanggal . ' ' . $timeNow,
+            'Asia/Jakarta'
+        )->toDateTimeString();
 
         Absensi::create([
             'user_id' => $request->user_id,
@@ -152,7 +158,7 @@ class AdminController extends Controller
         // jika admin tidak mengisi password, auto-generate yang mudah diingat (8 chars)
         $plainPassword = $request->password;
         if (empty($plainPassword)) {
-            $plainPassword = Str::random(8); // contoh: 'A1b2C3d4'
+            $plainPassword = Str::random(8);
         }
 
         $user = User::create([
@@ -182,6 +188,98 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.rekap', compact('rekap', 'tanggal'));
+    }
+
+    // EXPORT REKAP (CSV sederhana, bisa dibuka di Excel)
+    public function rekapExport(Request $request)
+    {
+        $tanggal = $request->tanggal ?? now('Asia/Jakarta')->toDateString();
+
+        $data = Absensi::with('user')
+            ->whereDate('waktu_absen', $tanggal)
+            ->orderBy('waktu_absen', 'asc')
+            ->get();
+
+        $filename = "rekap-absensi-{$tanggal}.csv";
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($data) {
+            $handle = fopen('php://output', 'w');
+
+            // header
+            fputcsv($handle, ['Nama', 'Tanggal', 'Waktu', 'Status', 'Metode', 'IP Address']);
+
+            foreach ($data as $row) {
+                $tanggal = $row->waktu_absen
+                    ? Carbon::parse($row->waktu_absen, 'Asia/Jakarta')->format('Y-m-d')
+                    : ($row->tanggal ?? '');
+
+                $waktu = $row->waktu_absen
+                    ? Carbon::parse($row->waktu_absen, 'Asia/Jakarta')->format('H:i:s')
+                    : '';
+
+                fputcsv($handle, [
+                    $row->user->nama ?? '-',
+                    $tanggal,
+                    $waktu,
+                    $row->status ?? '',
+                    $row->metode ?? '',
+                    $row->ip_address ?? '',
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // ⚙ PENGATURAN SISTEM (VIEW)
+    public function settings()
+    {
+        // Ambil nilai dari helper "setting()" (sudah kamu buat)
+        $jamAwal      = setting('jam_awal', '06:30');
+        $jamTepat     = setting('jam_tepat', '07:30');
+        $jamTerlambat = setting('jam_terlambat', '08:00');
+        $modeAbsen    = setting('mode_absen', 'normal');
+
+        return view('admin.settings', compact(
+            'jamAwal',
+            'jamTepat',
+            'jamTerlambat',
+            'modeAbsen'
+        ));
+    }
+
+    // ⚙ PENGATURAN SISTEM (SIMPAN)
+    public function updateSettings(Request $request)
+    {
+        $request->validate([
+            'jam_awal'      => 'required|date_format:H:i',
+            'jam_tepat'     => 'required|date_format:H:i',
+            'jam_terlambat' => 'required|date_format:H:i',
+            'mode_absen'    => 'required|in:strict,normal,relaxed',
+        ]);
+
+        $pairs = [
+            'jam_awal'      => $request->jam_awal,
+            'jam_tepat'     => $request->jam_tepat,
+            'jam_terlambat' => $request->jam_terlambat,
+            'mode_absen'    => $request->mode_absen,
+        ];
+
+        foreach ($pairs as $key => $value) {
+            DB::table('settings')->updateOrInsert(
+                ['key' => $key],
+                ['value' => $value]
+            );
+        }
+
+        return back()->with('success', 'Pengaturan absensi berhasil disimpan.');
     }
 
     // GRAPH JSON: earliest/latest (minutes from midnight) per day (default last 7 days)

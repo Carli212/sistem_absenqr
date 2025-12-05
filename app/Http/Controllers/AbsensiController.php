@@ -16,82 +16,65 @@ class AbsensiController extends Controller
         }
 
         $userId = session('siswa_id');
+        $user   = User::find($userId);
 
-        // Data user
-        $user = User::find($userId);
-        $foto = $user->foto ?? null;
+        // FOTO PROFIL (fallback)
+        $fotoPath = public_path('uploads/' . ($user->foto ?? ''));
+        $foto = (file_exists($fotoPath) && !empty($user->foto))
+            ? asset('uploads/' . $user->foto)
+            : asset('default-avatar.png');
 
-        // Waktu
-        $today = Carbon::today('Asia/Jakarta');
-        $now   = Carbon::now('Asia/Jakarta');
-        $month = $now->month;
-        $year  = $now->year;
-
-        /**
-         * 1. ABSENSI HARI INI
-         */
+        // ABSENSI HARI INI
+        $today = now('Asia/Jakarta')->toDateString();
         $absenHariIni = Absensi::where('user_id', $userId)
             ->whereDate('waktu_absen', $today)
             ->first();
 
-        // status untuk UI (hadir, terlambat, izin, sakit, alpha, belum absen)
-        $status = $absenHariIni ? strtolower($absenHariIni->status) : 'belum absen';
+        $jam_absen = $absenHariIni ? $absenHariIni->waktu_absen : '-';
 
-        // Jam absen
-        $jam_absen = $absenHariIni
-            ? Carbon::parse($absenHariIni->waktu_absen)->format('H:i:s')
-            : '-';
+        // === RULE JAM (DIAMBIL DARI SETTINGS DB) ===
+        $jamAwalMasuk = Carbon::parse(setting('jam_awal', '06:30:00'));
+        $jamTepatMasuk = Carbon::parse(setting('jam_tepat', '07:30:00'));
+        $jamTerlambat = Carbon::parse(setting('jam_terlambat', '08:00:00'));
 
-        /**
-         * 2. HITUNG SELISIH MENIT DATANG
-         */
-        $selisihMenit = null;
+        // STATUS HITUNGAN
+        if ($absenHariIni) {
+            $waktuMasuk = Carbon::parse($absenHariIni->waktu_absen);
 
-        if ($absenHariIni && $absenHariIni->waktu_absen) {
+            if ($waktuMasuk->lessThan($jamAwalMasuk)) {
+                $status = "Datang terlalu awal";
+                $selisihMenit = $waktuMasuk->diffInMinutes($jamAwalMasuk);
 
-            $waktuMasuk = Carbon::parse($absenHariIni->waktu_absen, 'Asia/Jakarta');
-            $jamMasuk     = Carbon::createFromTime(7, 30, 0, 'Asia/Jakarta');
-            $jamTerlambat = Carbon::createFromTime(8, 0, 0, 'Asia/Jakarta');
+            } elseif ($waktuMasuk->lessThanOrEqualTo($jamTepatMasuk)) {
+                $status = "Datang awal";
+                $selisihMenit = $jamTepatMasuk->diffInMinutes($waktuMasuk);
 
-            if ($waktuMasuk->lt($jamMasuk)) {
-                // Datang lebih awal (negatif)
-                $selisihMenit = -$waktuMasuk->diffInMinutes($jamMasuk);
-
-            } elseif ($waktuMasuk->between($jamMasuk, $jamTerlambat)) {
-                // Hadir normal
-                $selisihMenit = $waktuMasuk->diffInMinutes($jamMasuk);
+            } elseif ($waktuMasuk->lessThanOrEqualTo($jamTerlambat)) {
+                $status = "Tepat waktu";
+                $selisihMenit = 0;
 
             } else {
-                // Terlambat
-                // dihitung dari 07:30 → 08:00 (30 menit) + selisih telat
-                $selisihMenit = 30 + ($waktuMasuk->diffInMinutes($jamTerlambat));
+                $status = "Terlambat";
+                $selisihMenit = $waktuMasuk->diffInMinutes($jamTerlambat);
             }
+        } else {
+            $status = "Belum Absen";
+            $selisihMenit = 0;
         }
 
-        /**
-         * 3. RIWAYAT ABSENSI
-         */
+        // RIWAYAT
         $riwayat = Absensi::where('user_id', $userId)
-            ->orderBy('waktu_absen', 'desc')
+            ->orderBy('id', 'desc')
             ->take(10)
             ->get();
 
-        /**
-         * 4. TOTAL HADIR BULAN INI
-         */
-        $totalBulanIni = Absensi::where('user_id', $userId)
-            ->whereYear('waktu_absen', $year)
-            ->whereMonth('waktu_absen', $month)
-            ->whereIn('status', ['hadir', 'terlambat'])
-            ->count();
-
-        return view('user.dashboard', [
-            'status'        => $status,
-            'jam_absen'     => $jam_absen,
-            'selisihMenit'  => $selisihMenit,
-            'riwayat'       => $riwayat,
-            'foto'          => $foto,
-            'totalBulanIni' => $totalBulanIni,
-        ]);
+        return view('user.dashboard', compact(
+            'status',
+            'jam_absen',
+            'selisihMenit',
+            'riwayat',
+            'foto',
+            'absenHariIni'
+        ));
     }
 }

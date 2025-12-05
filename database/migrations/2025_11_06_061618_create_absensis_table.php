@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('waktu_absen');
-            $table->enum('status', ['hadir', 'terlambat', 'manual'])->default('hadir');
+            $table->enum('status', ['hadir', 'terlambat', 'alpha', 'izin', 'sakit']);
             $table->string('ip_address')->nullable();
             $table->timestamps();
         });

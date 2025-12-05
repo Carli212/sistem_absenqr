@@ -34,10 +34,17 @@ class AuthController extends Controller
             return back()->with('error', 'Nama atau password salah.')->withInput();
         }
 
+        // persiapkan nama file foto (jika ada di DB dan file ada)
+        $fotoFile = null;
+        if ($user->foto && file_exists(public_path('profile/' . $user->foto))) {
+            $fotoFile = $user->foto;
+        }
+
         // simpan session
         session([
             'siswa_id'   => $user->id,
             'siswa_nama' => $user->nama,
+            'siswa_foto' => $fotoFile,
         ]);
 
         return redirect()->route('user.scan');
