@@ -17,25 +17,28 @@ use App\Http\Controllers\AdminController;
 // PROFILE
 use App\Http\Controllers\ProfileController;
 
+
 /*
 |--------------------------------------------------------------------------
 | DEFAULT → Redirect ke Login Siswa
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return redirect()->route('login.siswa.show');
-});
+
+Route::get('/', fn() => redirect()->route('login.siswa.show'));
+
 
 /*
 |--------------------------------------------------------------------------
 | LOGIN & AUTH SISWA
 |--------------------------------------------------------------------------
 */
-Route::get('/login-siswa',  [AuthController::class, 'showLoginSiswa'])
+
+Route::get('/login-siswa', [AuthController::class, 'showLoginSiswa'])
     ->name('login.siswa.show');
 
 Route::post('/login-siswa', [AuthController::class, 'processLoginSiswa'])
     ->name('login.siswa.process');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,37 +47,39 @@ Route::post('/login-siswa', [AuthController::class, 'processLoginSiswa'])
 */
 Route::middleware('siswa.auth')->group(function () {
 
-    // DASHBOARD
+    // Dashboard
     Route::get('/dashboard-siswa', [AbsensiController::class, 'dashboard'])
         ->name('user.dashboard');
 
-    // PROFIL
+    // Profil
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('profile');
 
-    // UPDATE FOTO PROFIL
+    // Update Foto
     Route::post('/update-foto', [UserController::class, 'updateFoto'])
         ->name('user.updateFoto');
 
-    // SUKSES PAGE
+    // Success Page
     Route::get('/success', [UserController::class, 'success'])
         ->name('user.success');
 
-    // LOGOUT SISWA
+    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
 });
 
+
 /*
 |--------------------------------------------------------------------------
-| SCAN QR (Tanpa harus login dulu)
+| SCAN QR (Tanpa Login)
 |--------------------------------------------------------------------------
 */
-Route::get('/scan',  [ScanQrController::class, 'showScan'])
+Route::get('/scan', [ScanQrController::class, 'showScan'])
     ->name('user.scan');
 
 Route::post('/scan', [ScanQrController::class, 'processScan'])
     ->name('user.scan.process');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -87,24 +92,21 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLoginAdmin'])
 Route::post('/admin/login', [AdminAuthController::class, 'processLoginAdmin'])
     ->name('login.admin.process');
 
+
 /*
 |--------------------------------------------------------------------------
-| FITUR ADMIN (HARUS LOGIN ADMIN)
+| FITUR ADMIN (HARUS LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
-    // DASHBOARD ADMIN
+    // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])
         ->name('admin.dashboard');
 
-    // Grafik JSON
-    Route::get('/graph/json', [AdminController::class, 'graphJson'])
-        ->name('admin.graph.json');
-
-    // API Absensi Realtime
-    Route::get('/absensi/json', [AdminController::class, 'absensiTodayJson'])
-        ->name('admin.absensi.json');
+    // Grafik dengan filter dinamis
+    Route::get('/graph/filter', [AdminController::class, 'graphFilter'])
+        ->name('admin.graph.filter');
 
     // QR
     Route::get('/qr', [AdminController::class, 'generateQR'])
@@ -113,11 +115,11 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::get('/qr/json', [AdminController::class, 'qrJson'])
         ->name('admin.qr.json');
 
-    // Rekap per-tanggal (view)
+    // Rekap Absensi
     Route::get('/rekap', [AdminController::class, 'rekap'])
         ->name('admin.rekap');
 
-    // Export Rekap ke "Excel" (CSV)
+    // Export CSV
     Route::get('/rekap/export', [AdminController::class, 'rekapExport'])
         ->name('admin.rekap.export');
 
@@ -131,21 +133,38 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::delete('/absensi-manual/{id}', [AdminController::class, 'deleteAbsensiManual'])
         ->name('admin.absensi.manual.delete');
 
-    // Buat user siswa
+    // Tambah User
     Route::get('/create-user', [AdminController::class, 'showCreateUser'])
         ->name('admin.user.create');
 
     Route::post('/create-user', [AdminController::class, 'storeUser'])
         ->name('admin.user.store');
 
-    // Settings (⚙ Pengaturan Sistem)
+    // Settings
     Route::get('/settings', [AdminController::class, 'settings'])
         ->name('admin.settings');
 
     Route::post('/settings', [AdminController::class, 'updateSettings'])
         ->name('admin.settings.update');
 
-    // Logout admin
+    // Kalender
+    Route::get('/calendar', [AdminController::class, 'calendar'])
+        ->name('admin.calendar');
+
+    Route::get('/calendar/detail/{date}', [AdminController::class, 'calendarDetail'])
+        ->name('admin.calendar.detail');
+
+    Route::get('/calendar/data/{year}/{month}', [AdminController::class, 'calendarData'])
+        ->name('admin.calendar.data');
+
+    Route::get('/ranking', [AdminController::class, 'rankingKehadiran'])->name('admin.ranking');
+
+    // Logout Admin
     Route::post('/logout', [AdminAuthController::class, 'logoutAdmin'])
         ->name('admin.logout');
+});
+
+Route::fallback(function () {
+    return redirect()->route('login.siswa.show')
+        ->with('error', 'Halaman tidak ditemukan.');
 });

@@ -33,34 +33,44 @@ class AbsensiController extends Controller
         $jam_absen = $absenHariIni ? $absenHariIni->waktu_absen : '-';
 
         // === RULE JAM (DIAMBIL DARI SETTINGS DB) ===
-        $jamAwalMasuk = Carbon::parse(setting('jam_awal', '06:30:00'));
-        $jamTepatMasuk = Carbon::parse(setting('jam_tepat', '07:30:00'));
-        $jamTerlambat = Carbon::parse(setting('jam_terlambat', '08:00:00'));
+        // fallback kalau setting belum ada tetap aman
+        $jamAwalMasuk  = Carbon::parse(setting('jam_awal', '06:30'));
+        $jamTepatMasuk = Carbon::parse(setting('jam_tepat', '07:30'));
+        $jamTerlambat  = Carbon::parse(setting('jam_terlambat', '08:00'));
 
-        // STATUS HITUNGAN
+        // DEFAULT STATUS
+        $status_label   = "Belum Absen";
+        $status_code    = "none";   // dipakai di UI untuk warna
+        $selisihMenit   = 0;
+
+        // HITUNG STATUS & SELISIH
         if ($absenHariIni) {
             $waktuMasuk = Carbon::parse($absenHariIni->waktu_absen);
 
             if ($waktuMasuk->lessThan($jamAwalMasuk)) {
-                $status = "Datang terlalu awal";
+                $status_label = "Datang Terlalu Awal";
+                $status_code  = "early";
                 $selisihMenit = $waktuMasuk->diffInMinutes($jamAwalMasuk);
 
             } elseif ($waktuMasuk->lessThanOrEqualTo($jamTepatMasuk)) {
-                $status = "Datang awal";
+                $status_label = "Datang Awal";
+                $status_code  = "good";
                 $selisihMenit = $jamTepatMasuk->diffInMinutes($waktuMasuk);
 
             } elseif ($waktuMasuk->lessThanOrEqualTo($jamTerlambat)) {
-                $status = "Tepat waktu";
+                $status_label = "Tepat Waktu";
+                $status_code  = "ontime";
                 $selisihMenit = 0;
 
             } else {
-                $status = "Terlambat";
+                $status_label = "Terlambat";
+                $status_code  = "late";
                 $selisihMenit = $waktuMasuk->diffInMinutes($jamTerlambat);
             }
-        } else {
-            $status = "Belum Absen";
-            $selisihMenit = 0;
         }
+
+        // Backward compatibility kalau masih ada yang pakai $status di view lain
+        $status = $status_label;
 
         // RIWAYAT
         $riwayat = Absensi::where('user_id', $userId)
@@ -69,7 +79,9 @@ class AbsensiController extends Controller
             ->get();
 
         return view('user.dashboard', compact(
-            'status',
+            'status',        // legacy
+            'status_label',  // label jelas
+            'status_code',   // kode untuk styling
             'jam_absen',
             'selisihMenit',
             'riwayat',

@@ -157,7 +157,7 @@
 
     @keyframes birdFly {
         from { transform: translate(0, 0); }
-        to { transform: translate(calc(100vw + 100px), 0); }
+        to { transform: translateX(calc(100vw + 100px)); }
     }
 
     @keyframes wingFlap {
@@ -275,6 +275,22 @@
         color: #1864ab;
     }
 
+    /* tambahan untuk mode baru */
+    .status-early {
+        background: #e7f5ff;
+        color: #1c7ed6;
+    }
+
+    .status-ontime {
+        background: #d3f9d8;
+        color: #2f9e44;
+    }
+
+    .status-late {
+        background: #ffe3e3;
+        color: #c92a2a;
+    }
+
     .calendar-box {
         background: linear-gradient(135deg, #40c057 0%, #2b8a3e 100%);
         padding: 20px;
@@ -318,7 +334,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800 mb-1">
-                        👋 Halo, {{ session('siswa_nama') }}!
+                        🖕( •_• ) 🖕, {{ session('siswa_nama') }}!
                     </h2>
                     <p class="text-sm text-gray-600">
                         Selamat datang di Dashboard Sistem Absensi
@@ -356,12 +372,14 @@
                         <h3 class="font-bold text-lg text-gray-800 mb-2">Status Absensi Hari Ini</h3>
                         
                         <div class="mb-2">
-                            @if($status == "Terlambat")
-                                <span class="status-badge status-terlambat">🔴 {{ $status }}</span>
-                            @elseif($status == "Belum Absen")
-                                <span class="status-badge status-belum">⏳ {{ $status }}</span>
+                            @if($status_code === 'late')
+                                <span class="status-badge status-late">🔴 {{ $status_label }}</span>
+                            @elseif($status_code === 'early')
+                                <span class="status-badge status-early">🌅 {{ $status_label }}</span>
+                            @elseif($status_code === 'good' || $status_code === 'ontime')
+                                <span class="status-badge status-ontime">✅ {{ $status_label }}</span>
                             @else
-                                <span class="status-badge status-hadir">✅ {{ $status }}</span>
+                                <span class="status-badge status-belum">⏳ {{ $status_label }}</span>
                             @endif
                         </div>
 
@@ -403,7 +421,7 @@
             <div class="overflow-x-auto rounded-lg border border-gray-200">
                 <table class="w-full">
                     <thead>
-                        <tr class="bg-gradient-to-r from-green-600 to-green-700 text-white">
+                        <tr class="bg-gradient-to-r from-green-600 to-green-700 text-blod">
                             <th class="p-3 text-left font-semibold">Tanggal</th>
                             <th class="p-3 text-left font-semibold">Status</th>
                             <th class="p-3 text-left font-semibold">Metode</th>

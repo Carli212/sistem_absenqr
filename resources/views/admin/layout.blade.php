@@ -1057,6 +1057,11 @@
                 <span class="menu-icon">📚</span>
                 <span>Buku Absensi</span>
             </a>
+            <a href="{{ route('admin.calendar') }}"
+                class="menu-item @if(request()->routeIs('admin.calendar')) active-menu @endif">
+                <span class="menu-icon">📅</span>
+                <span>Kalender Absensi</span>
+            </a>
 
             <a href="{{ route('admin.user.create') }}"
                 class="menu-item @if(request()->routeIs('admin.user.create')) active-menu @endif">
