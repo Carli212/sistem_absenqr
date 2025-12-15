@@ -323,39 +323,53 @@
         @endif
 
         <form action="{{ route('login.siswa.process') }}" method="POST">
-            @csrf
+    @csrf
 
-            <div class="form-group-siswa">
-                <div class="input-wrapper">
-                    <span class="input-icon-siswa">👤</span>
-                    <input
-                        type="text"
-                        name="nama"
-                        value="{{ old('nama') }}"
-                        placeholder="Nama Lengkap"
-                        class="form-input-siswa"
-                        required
-                        autofocus>
-                </div>
-            </div>
+    <div class="form-group-siswa">
+        <div class="input-wrapper">
+            <span class="input-icon-siswa">👤</span>
+            <input
+                type="text"
+                name="nama"
+                value="{{ old('nama') }}"
+                placeholder="Nama Lengkap"
+                class="form-input-siswa"
+                required
+                autofocus>
+        </div>
+    </div>
 
-            <div class="form-group-siswa">
-                <div class="input-wrapper">
-                    <span class="input-icon-siswa">🔒</span>
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        class="form-input-siswa"
-                        required>
-                </div>
-            </div>
+    <div class="form-group-siswa">
+        <div class="input-wrapper">
+            <span class="input-icon-siswa">🔒</span>
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                class="form-input-siswa"
+                required>
+        </div>
+    </div>
 
-            <button type="submit" class="submit-btn-siswa">
-                <span style="font-size: 18px;">📱</span>
-                <span>Mulai Absen</span>
-            </button>
-        </form>
+    <!-- ============================ -->
+    <!-- 🔐 DEVICE ID (baru ditambah) -->
+    <!-- ============================ -->
+    <input type="hidden" name="device_id" id="device_id">
+
+    <script>
+        // Generate device_id jika belum ada
+        if (!localStorage.getItem("device_id")) {
+            localStorage.setItem("device_id", crypto.randomUUID());
+        }
+        document.getElementById("device_id").value = localStorage.getItem("device_id");
+    </script>
+    <!-- ============================ -->
+
+    <button type="submit" class="submit-btn-siswa">
+        <span style="font-size: 18px;">📱</span>
+        <span>Mulai Absen</span>
+    </button>
+</form>
 
         <div class="login-footer-siswa">
             <p>🌳 Sistem terhubung otomatis dengan IP perangkat Anda</p>

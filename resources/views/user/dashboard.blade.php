@@ -33,8 +33,15 @@
     }
 
     @keyframes sunPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
     }
 
     /* Mountains */
@@ -66,7 +73,8 @@
         animation: cloudMove 50s linear infinite;
     }
 
-    .cloud::before, .cloud::after {
+    .cloud::before,
+    .cloud::after {
         content: '';
         position: absolute;
         background: rgba(255, 255, 255, 0.8);
@@ -118,8 +126,13 @@
     }
 
     @keyframes cloudMove {
-        from { transform: translateX(0); }
-        to { transform: translateX(calc(100vw + 300px)); }
+        from {
+            transform: translateX(0);
+        }
+
+        to {
+            transform: translateX(calc(100vw + 300px));
+        }
     }
 
     /* Birds */
@@ -130,7 +143,8 @@
         animation: birdFly 30s linear infinite;
     }
 
-    .bird::before, .bird::after {
+    .bird::before,
+    .bird::after {
         content: '';
         position: absolute;
         background: #333;
@@ -152,17 +166,38 @@
         animation: wingFlap 0.5s ease-in-out infinite 0.25s;
     }
 
-    .bird1 { top: 100px; left: -40px; }
-    .bird2 { top: 130px; left: -60px; animation-delay: 4s; animation-duration: 35s; }
+    .bird1 {
+        top: 100px;
+        left: -40px;
+    }
+
+    .bird2 {
+        top: 130px;
+        left: -60px;
+        animation-delay: 4s;
+        animation-duration: 35s;
+    }
 
     @keyframes birdFly {
-        from { transform: translate(0, 0); }
-        to { transform: translateX(calc(100vw + 100px)); }
+        from {
+            transform: translate(0, 0);
+        }
+
+        to {
+            transform: translateX(calc(100vw + 100px));
+        }
     }
 
     @keyframes wingFlap {
-        0%, 100% { transform: rotate(-20deg); }
-        50% { transform: rotate(-30deg); }
+
+        0%,
+        100% {
+            transform: rotate(-20deg);
+        }
+
+        50% {
+            transform: rotate(-30deg);
+        }
     }
 
     /* Ground */
@@ -326,15 +361,15 @@
 </div>
 
 <!-- Dashboard Content -->
-<div class="dashboard-content">
+<div class="dashboard-content page-fade">
     <div class="max-w-5xl mx-auto">
 
         <!-- Header Card -->
-        <div class="dashboard-card">
+        <div class="dashboard-card glass-card">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800 mb-1">
-                        🖕( •_• ) 🖕, {{ session('siswa_nama') }}!
+                        Hi, {{ session('siswa_nama') }}!
                     </h2>
                     <p class="text-sm text-gray-600">
                         Selamat datang di Dashboard Sistem Absensi
@@ -342,9 +377,6 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <a href="{{ route('user.scan') }}" class="btn-info">
-                        📷 Scan QR
-                    </a>
 
                     <a href="{{ route('profile') }}" class="btn-primary">
                         ✏️ Edit Profil
@@ -363,28 +395,28 @@
         <!-- Status & Calendar Card -->
         <div class="dashboard-card">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
+
                 <!-- Left: Profile & Status -->
                 <div class="flex items-center gap-4">
                     <img src="{{ $foto }}" class="profile-pic" alt="Foto Profil">
 
                     <div class="flex-1">
                         <h3 class="font-bold text-lg text-gray-800 mb-2">Status Absensi Hari Ini</h3>
-                        
+
                         <div class="mb-2">
                             @if($status_code === 'late')
-                                <span class="status-badge status-late">🔴 {{ $status_label }}</span>
+                            <span class="status-badge status-late">🔴 {{ $status_label }}</span>
                             @elseif($status_code === 'early')
-                                <span class="status-badge status-early">🌅 {{ $status_label }}</span>
+                            <span class="status-badge status-early">🌅 {{ $status_label }}</span>
                             @elseif($status_code === 'good' || $status_code === 'ontime')
-                                <span class="status-badge status-ontime">✅ {{ $status_label }}</span>
+                            <span class="status-badge status-ontime">✅ {{ $status_label }}</span>
                             @else
-                                <span class="status-badge status-belum">⏳ {{ $status_label }}</span>
+                            <span class="status-badge status-belum">⏳ {{ $status_label }}</span>
                             @endif
                         </div>
 
                         <p class="text-sm text-gray-600">
-                            <strong>Waktu:</strong> 
+                            <strong>Waktu:</strong>
                             {{ $jam_absen !== '-' ? \Carbon\Carbon::parse($jam_absen)->format('H:i:s') . ' WIB' : '-' }}
                         </p>
                         <p class="text-sm text-gray-600">
@@ -399,12 +431,12 @@
                         <div class="calendar-day" id="day"></div>
                         <div class="text-lg font-semibold" id="weekday"></div>
                         <div class="calendar-info" id="month-year"></div>
-                        
+
                         <div class="mt-4 pt-4 border-t border-white/30">
                             @if($absenHariIni)
-                                <div class="font-bold">✔ Sudah Absen Hari Ini</div>
+                            <div class="font-bold">✔ Sudah Absen Hari Ini</div>
                             @else
-                                <div class="font-semibold opacity-90">Belum Absen</div>
+                            <div class="font-semibold opacity-90">Belum Absen</div>
                             @endif
                         </div>
                     </div>
@@ -434,11 +466,11 @@
                             <td class="p-3 text-gray-700">{{ $item->tanggal }}</td>
                             <td class="p-3">
                                 @if($item->status == 'hadir')
-                                    <span class="text-green-600 font-semibold">✅ Hadir</span>
+                                <span class="text-green-600 font-semibold">✅ Hadir</span>
                                 @elseif($item->status == 'terlambat')
-                                    <span class="text-yellow-600 font-semibold">⚠️ Terlambat</span>
+                                <span class="text-yellow-600 font-semibold">⚠️ Terlambat</span>
                                 @else
-                                    <span class="text-red-600 font-semibold">❌ Alpha</span>
+                                <span class="text-red-600 font-semibold">❌ Alpha</span>
                                 @endif
                             </td>
                             <td class="p-3 text-gray-700 font-medium">{{ strtoupper($item->metode) }}</td>
