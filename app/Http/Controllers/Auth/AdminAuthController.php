@@ -17,30 +17,40 @@ class AdminAuthController extends Controller
     public function processLoginAdmin(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string',
-            'nomor_wa' => 'required|string',
-            'password' => 'required|string',
+            'nomor_wa' => 'required',
+            'password' => 'required'
         ]);
 
-        $admin = Admin::where('nama', $request->nama)
-            ->where('nomor_wa', $request->nomor_wa)
-            ->first();
+        $admin = Admin::where('nomor_wa', $request->nomor_wa)->first();
 
         if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return back()->withInput()->with('error', 'Data login tidak valid.');
+            return back()->with('error', 'Login admin gagal');
         }
 
+        // 🔥 PENTING
+        $request->session()->invalidate();
+        $request->session()->regenerate();
+
         session([
-            'admin_id'   => $admin->id,
-            'admin_name' => $admin->nama,
+            'ADMIN_LOGIN' => true,
+            'ADMIN_ID'    => $admin->id,
+            'ADMIN_NAMA'  => $admin->nama
         ]);
 
         return redirect()->route('admin.dashboard');
     }
 
-    public function logoutAdmin()
+    public function logoutAdmin(Request $request)
     {
-        session()->forget(['admin_id', 'admin_name']);
+        $request->session()->forget([
+            'ADMIN_LOGIN',
+            'ADMIN_ID',
+            'ADMIN_NAMA'
+        ]);
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login.admin.show');
     }
 }

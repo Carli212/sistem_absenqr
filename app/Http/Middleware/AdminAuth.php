@@ -10,7 +10,8 @@ class AdminAuth
     public function handle(Request $request, Closure $next)
     {
         if (!session()->has('admin_id')) {
-            return redirect()->route('login.admin.show')->with('error', 'Login admin diperlukan.');
+            return redirect()->route('login.admin.show')
+                ->with('error', 'Silakan login sebagai admin');
         }
 
         return $next($request);

@@ -28,7 +28,7 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'auth'       => \App\Http\Middleware\Authenticate::class,
-        'siswa.auth' => \App\Http\Middleware\SiswaAuth::class,   // 🟢 WAJIB
         'admin.auth' => \App\Http\Middleware\AdminAuth::class,
+        'siswa.auth' => \App\Http\Middleware\SiswaAuth::class,
     ];
 }

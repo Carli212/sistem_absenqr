@@ -10,8 +10,7 @@ class SiswaAuth
     public function handle(Request $request, Closure $next)
     {
         if (!session()->has('siswa_id')) {
-            return redirect()->route('login.siswa.show')
-                             ->with('error', 'Silakan login terlebih dahulu.');
+            return redirect()->route('login.siswa.show');
         }
 
         return $next($request);

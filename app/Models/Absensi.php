@@ -10,16 +10,24 @@ class Absensi extends Model
     use HasFactory;
 
     protected $table = 'absensis'; // ganti jika table mu berbeda
-    protected $fillable = [
-        'user_id', 'tanggal', 'waktu_absen', 'status', 'metode', 'ip_address'
-    ];
+protected $fillable = [
+    'user_id',
+    'tanggal',
+    'waktu_absen',
+    'status',
+    'metode',
+    'ip_address',
+    'user_agent', // 🔥 TAMBAH INI
+];
+
 
     protected $casts = [
         'waktu_absen' => 'datetime',
     ];
 
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+{
+    return $this->belongsTo(User::class);
+}
+
 }

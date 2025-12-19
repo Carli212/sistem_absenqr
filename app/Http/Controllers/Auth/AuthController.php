@@ -21,66 +21,43 @@ class AuthController extends Controller
         $request->validate([
             'nama' => 'required|string',
             'password' => 'required|string',
-            'device_id' => 'nullable|string'
+            'device_id' => 'required|string',
         ]);
 
-        // Cari user berdasarkan nama (case insensitive)
         $user = User::whereRaw('LOWER(nama) = ?', [strtolower($request->nama)])
             ->first();
 
-        if (!$user) {
-            return back()->with('error', 'Nama tidak ditemukan.')->withInput();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'Nama atau password salah.');
         }
 
-        // Cek password
-        if (!$user->password || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Nama atau password salah.')->withInput();
+        // 🔐 DEVICE LOCK (KONSISTEN DENGAN LOGIN VIEW)
+        if (is_null($user->device_id)) {
+            $user->device_id = $request->device_id;
+        } elseif ($user->device_id !== $request->device_id) {
+            return back()->with('device_error', 'Perangkat ini tidak cocok dengan akun ini!');
         }
 
-        /**
-         * ============================
-         * DEVICE-ID VALIDATION
-         * ============================
-         */
-        $deviceId = $request->device_id;
-
-        // Jika user belum pernah login → daftarkan device sekarang
-        if (!$user->device_id) {
-            $user->device_id = $deviceId;
-        } else {
-            // Jika beda → tolak
-            if ($user->device_id !== $deviceId) {
-                return back()->with('device_error', 'Perangkat ini tidak cocok dengan akun ini!');
-            }
-        }
-
-        // Update info login
         $user->last_ip = $request->ip();
         $user->user_agent = $request->userAgent();
         $user->last_login_at = Carbon::now('Asia/Jakarta');
         $user->save();
 
-
-        /**
-         * ============================
-         * LOG AKTIVITAS
-         * ============================
-         */
         ActivityLog::create([
             'user_id' => $user->id,
             'activity' => 'login_siswa',
             'description' => 'Siswa berhasil login',
             'ip' => $request->ip(),
-            'device_id' => $deviceId,
+            'device_id' => $request->device_id,
             'user_agent' => $request->userAgent()
         ]);
 
+        // 🔥 INI KUNCI SUPAYA TIDAK BALIK KE LOGIN
+        $request->session()->regenerate();
 
-        // Simpan session
         session([
             'siswa_id'   => $user->id,
             'siswa_nama' => $user->nama,
-            'siswa_foto' => $user->foto ?? null,
             'device_id'  => $user->device_id
         ]);
 
@@ -89,7 +66,6 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Log aktivitas logout
         if (session('siswa_id')) {
             ActivityLog::create([
                 'user_id' => session('siswa_id'),

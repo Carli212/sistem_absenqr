@@ -7,8 +7,10 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
 class VerifyCsrfToken extends Middleware
 {
     protected $except = [
-        '/login-siswa',
-        '/admin/login',
-        '/scan',
-    ];
+    'login-siswa',
+    'admin/login',
+    'scan',
+    'scan/*',
+];
+
 }

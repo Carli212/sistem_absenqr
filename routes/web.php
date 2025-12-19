@@ -28,11 +28,8 @@ Route::get('/', fn() => redirect()->route('login.siswa.show'));
 
 
 /*
-|--------------------------------------------------------------------------
-| LOGIN & AUTH SISWA
-|--------------------------------------------------------------------------
+| LOGIN SISWA
 */
-
 Route::get('/login-siswa', [AuthController::class, 'showLoginSiswa'])
     ->name('login.siswa.show');
 
@@ -41,44 +38,35 @@ Route::post('/login-siswa', [AuthController::class, 'processLoginSiswa'])
 
 
 /*
-|--------------------------------------------------------------------------
-| FITUR SISWA (Wajib Login)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('siswa.auth')->group(function () {
-
-    // Dashboard
-    Route::get('/dashboard-siswa', [AbsensiController::class, 'dashboard'])
-        ->name('user.dashboard');
-
-    // Profil
-    Route::get('/profile', [ProfileController::class, 'index'])
-        ->name('profile');
-
-    // Update Foto
-    Route::post('/update-foto', [UserController::class, 'updateFoto'])
-        ->name('user.updateFoto');
-
-    // Success Page
-    Route::get('/success', [UserController::class, 'success'])
-        ->name('user.success');
-
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| SCAN QR (Tanpa Login)
-|--------------------------------------------------------------------------
+| SCAN QR (PUBLIC, TAPI DICEK DI CONTROLLER)
 */
 Route::get('/scan', [ScanQrController::class, 'showScan'])
     ->name('user.scan');
 
 Route::post('/scan', [ScanQrController::class, 'processScan'])
     ->name('user.scan.process');
+
+
+/*
+| FITUR SISWA (WAJIB LOGIN)
+*/
+Route::middleware('siswa.auth')->group(function () {
+
+    Route::get('/dashboard-siswa', [AbsensiController::class, 'dashboard'])
+        ->name('user.dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'index'])
+        ->name('profile');
+
+    Route::post('/update-foto', [UserController::class, 'updateFoto'])
+        ->name('user.updateFoto');
+
+    Route::get('/success', [UserController::class, 'success'])
+        ->name('user.success');
+
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+});
 
 
 /*

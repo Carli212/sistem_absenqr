@@ -333,112 +333,59 @@ let html5QrCode;
 const statusEl = document.getElementById('status');
 
 function startScanner() {
-    statusEl.innerText = "🔍 Mencoba mengaktifkan kamera...";
-
+    statusEl.innerText = "📸 Mengaktifkan kamera...";
     html5QrCode = new Html5Qrcode("reader");
 
     html5QrCode.start(
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         onScanSuccess
-    )
-    .then(() => {
-        statusEl.innerText = "📸 Kamera aktif, silakan arahkan ke QR Code";
-    })
-    .catch(err => {
-        statusEl.innerText = "⚠️ Kamera tidak tersedia atau ditolak: " + err;
-        document.getElementById('btnFallback').style.display = 'inline-block';
+    ).then(() => {
+        statusEl.innerText = "📷 Kamera aktif, arahkan ke QR Code";
+    }).catch(() => {
+        statusEl.innerText = "⚠️ Kamera tidak tersedia";
     });
 }
 
 function onScanSuccess(decodedText) {
-    html5QrCode.stop().then(() => {
-        statusEl.innerText = "🔍 QR terdeteksi, memproses...";
-        postCode(decodedText);
-    }).catch(e => {
-        statusEl.innerText = "🔍 QR terdeteksi (error stop), memproses...";
-        postCode(decodedText);
-    });
+    html5QrCode.stop().catch(() => {});
+    statusEl.innerText = "⏳ Memproses QR...";
+    postCode(decodedText);
 }
 
 function postCode(kode) {
     fetch("{{ route('user.scan.process') }}", {
         method: "POST",
+        credentials: "same-origin",
         headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         },
-        body: JSON.stringify({ kode: kode })
+        body: JSON.stringify({ kode })
     })
-    .then(res => res.text())
-    .then(html => {
-        if (html.includes('Kode QR tidak valid') || html.includes('kadaluwarsa')) {
-            Swal.fire({
-                icon: 'error',
-                title: '❌ QR Tidak Valid',
-                text: 'Kode QR tidak valid atau sudah kedaluwarsa.',
-                confirmButtonText: '🔁 Scan Ulang',
-                background: '#ffffff',
-                color: '#1b4332',
-                allowOutsideClick: false,
-            }).then(() => startScanner());
-        } else if (html.includes('Kamu sudah absen')) {
-            Swal.fire({
-                icon: 'info',
-                title: '⚠️ Sudah Absen',
-                text: 'Kamu sudah melakukan absensi hari ini.',
-                confirmButtonText: 'Oke',
-                background: '#ffffff',
-                color: '#1b4332',
-            }).then(() => {
-                window.location.href = "{{ route('user.dashboard') }}";
-            });
-        } else if (html.includes('OK')) {
-            Swal.fire({
-                icon: 'success',
-                title: '✅ Absensi Berhasil!',
-                text: 'Data absensi Anda telah disimpan.',
-                confirmButtonText: 'Lanjut ke Dashboard',
-                background: '#ffffff',
-                color: '#1b4332',
-            }).then(() => {
-                window.location.href = "{{ route('user.dashboard') }}";
-            });
-        } else {
-            Swal.fire('Info', html, 'info').then(() => startScanner());
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            Swal.fire('✅ Berhasil', data.message, 'success')
+                .then(() => window.location.href = "{{ route('user.dashboard') }}");
+        }
+        else if (data.status === 'info') {
+            Swal.fire('ℹ️ Info', data.message, 'info')
+                .then(() => window.location.href = "{{ route('user.dashboard') }}");
+        }
+        else {
+            Swal.fire('❌ Gagal', data.message, 'error')
+                .then(() => startScanner());
         }
     })
-    .catch(err => {
-        Swal.fire('Error', 'Terjadi kesalahan koneksi: ' + err, 'error');
+    .catch(() => {
+        Swal.fire('❌ Error', 'Gagal terhubung ke server', 'error');
         startScanner();
     });
 }
 
-/* Fallback: upload file -> decode */
-document.getElementById('btnFallback').addEventListener('click', () => {
-    document.getElementById('filePicker').click();
-});
-
-document.getElementById('filePicker').addEventListener('change', function(e) {
-    const file = this.files[0];
-    if (!file) return;
-
-    statusEl.innerText = '🔍 Menganalisis gambar...';
-
-    Html5Qrcode.getCameras();
-
-    Html5Qrcode.scanFileInBrowser(file, true)
-    .then(decodedText => {
-        statusEl.innerText = '✅ QR terdeteksi dari gambar';
-        postCode(decodedText);
-    })
-    .catch(err => {
-        statusEl.innerText = '⚠️ Tidak ada QR yang terdeteksi di gambar: ' + err;
-        Swal.fire('Tidak ada QR', 'Gambar tidak mengandung QR code yang valid.', 'error');
-    });
-});
-
 window.addEventListener('load', startScanner);
 </script>
+
 
 @endsection
