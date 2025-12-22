@@ -166,6 +166,16 @@ class AdminController extends Controller
         return back()->with('success', 'Absensi manual berhasil.');
     }
 
+    /* ================= REKAP ABSENSI ================= */
+    public function rekap()
+    {
+        $absensi = Absensi::with('user')
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        return view('admin.rekap', compact('absensi'));
+    }
+
     /* ================= CREATE USER ================= */
     public function storeUser(Request $request)
     {
