@@ -118,6 +118,9 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::post('/absensi-manual', [AdminController::class, 'storeAbsensiManual'])
         ->name('admin.absensi.manual.store');
 
+    Route::patch('/absensi/{id}/status', [AdminController::class, 'updateAbsensiStatus'])
+        ->name('admin.absensi.update');
+
     Route::delete('/absensi-manual/{id}', [AdminController::class, 'deleteAbsensiManual'])
         ->name('admin.absensi.manual.delete');
 
@@ -146,6 +149,9 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
         ->name('admin.calendar.data');
 
     Route::get('/ranking', [AdminController::class, 'rankingKehadiran'])->name('admin.ranking');
+
+    Route::get('/users',[AdminController::class,'manageUser'])
+    ->name('admin.user.index');
 
     // Logout Admin
     Route::post('/logout', [AdminAuthController::class, 'logoutAdmin'])

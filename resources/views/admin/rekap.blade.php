@@ -5,104 +5,541 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto space-y-6">
+<style>
+    /* Card Styling */
+    .manual-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 36px;
+        box-shadow: 
+            0 10px 40px rgba(102, 126, 234, 0.15),
+            0 0 1px rgba(255, 255, 255, 0.8) inset;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .manual-card:hover {
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 24px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-radius: 20px;
+        padding: 24px;
+        border: 2px solid;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0.1;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card.green {
+        border-color: #6ee7b7;
+    }
+
+    .stat-card.green::before {
+        background: #10b981;
+    }
+
+    .stat-card.yellow {
+        border-color: #fcd34d;
+    }
+
+    .stat-card.yellow::before {
+        background: #f59e0b;
+    }
+
+    .stat-card.blue {
+        border-color: #93c5fd;
+    }
+
+    .stat-card.blue::before {
+        background: #3b82f6;
+    }
+
+    .stat-card.purple {
+        border-color: #c4b5fd;
+    }
+
+    .stat-card.purple::before {
+        background: #8b5cf6;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 36px;
+        font-weight: 900;
+        color: #1e293b;
+    }
+
+    .stat-icon {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        font-size: 48px;
+        opacity: 0.15;
+    }
+
+    /* Filter Section */
+    .filter-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px 16px 0 0;
+        padding: 20px 28px;
+        color: white;
+        font-weight: 900;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .filter-content {
+        background: white;
+        border-radius: 0 0 16px 16px;
+        padding: 28px;
+        border: 2px solid #e0e7ff;
+        border-top: none;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e293b;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn-submit {
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        width: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-reset {
+        padding: 14px 32px;
+        background: #f1f5f9;
+        color: #475569;
+        border: 2px solid #cbd5e1;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        width: 100%;
+    }
+
+    .btn-reset:hover {
+        background: #e2e8f0;
+        border-color: #94a3b8;
+    }
+
+    /* Table Styling */
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 2px solid #f1f5f9;
+    }
+
+    .table-manual {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-manual thead th {
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        padding: 16px 20px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 800;
+        color: #4338ca;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-bottom: 2px solid #667eea;
+    }
+
+    .table-manual thead th:first-child {
+        border-top-left-radius: 14px;
+    }
+
+    .table-manual thead th:last-child {
+        border-top-right-radius: 14px;
+    }
+
+    .table-manual tbody tr {
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .table-manual tbody tr::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, transparent 100%);
+        transition: width 0.3s ease;
+        pointer-events: none;
+    }
+
+    .table-manual tbody tr:hover {
+        background: rgba(224, 231, 255, 0.3);
+        transform: translateX(4px);
+    }
+
+    .table-manual tbody tr:hover::after {
+        width: 100%;
+    }
+
+    .table-manual tbody td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #1e293b;
+        font-weight: 600;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table-manual tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-manual tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 14px;
+    }
+
+    .table-manual tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 14px;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        padding: 7px 16px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        border: 2px solid;
+        transition: all 0.2s ease;
+    }
+
+    .status-badge:hover {
+        transform: scale(1.05);
+    }
+
+    .status-hadir {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border-color: #6ee7b7;
+    }
+
+    .status-terlambat {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        border-color: #fcd34d;
+    }
+
+    .status-izin,
+    .status-sakit {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e3a8a;
+        border-color: #93c5fd;
+    }
+
+    .status-alpha {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        border-color: #fca5a5;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 56px 24px;
+        color: #94a3b8;
+    }
+
+    .empty-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .empty-text {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* User Avatar */
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 900;
+        font-size: 16px;
+        margin-right: 12px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+</style>
+
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    {{-- STATS CARDS --}}
+    <div class="stats-grid">
+        <div class="stat-card green">
+            <div class="stat-label">✅ Total Hadir</div>
+            <div class="stat-value">{{ $rekap->where('status', 'hadir')->count() }}</div>
+            <div class="stat-icon">✅</div>
+        </div>
+
+        <div class="stat-card yellow">
+            <div class="stat-label">⏰ Terlambat</div>
+            <div class="stat-value">{{ $rekap->where('status', 'terlambat')->count() }}</div>
+            <div class="stat-icon">⏰</div>
+        </div>
+
+        <div class="stat-card blue">
+            <div class="stat-label">📋 Izin/Sakit</div>
+            <div class="stat-value">{{ $rekap->whereIn('status', ['izin', 'sakit'])->count() }}</div>
+            <div class="stat-icon">📋</div>
+        </div>
+
+        <div class="stat-card purple">
+            <div class="stat-label">📊 Total Data</div>
+            <div class="stat-value">{{ $rekap->count() }}</div>
+            <div class="stat-icon">📊</div>
+        </div>
+    </div>
 
     {{-- FILTER CARD --}}
-    <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6">
+    <div style="margin-bottom: 32px;">
+        <div class="filter-header">
+            🔍 Filter & Pencarian
+        </div>
+        <div class="filter-content">
+            <form method="GET" action="{{ route('admin.rekap') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                
+                {{-- Tanggal --}}
+                <div>
+                    <label class="form-label">📅 Tanggal</label>
+                    <input type="date" name="tanggal"
+                        value="{{ request('tanggal') }}"
+                        class="form-input">
+                </div>
 
-        <h2 class="text-xl font-bold text-gray-800 mb-3">Filter Rekap</h2>
+                {{-- Status --}}
+                <div>
+                    <label class="form-label">✅ Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="hadir" {{ request('status') == 'hadir' ? 'selected' : '' }}>Hadir</option>
+                        <option value="terlambat" {{ request('status') == 'terlambat' ? 'selected' : '' }}>Terlambat</option>
+                        <option value="izin" {{ request('status') == 'izin' ? 'selected' : '' }}>Izin</option>
+                        <option value="sakit" {{ request('status') == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                    </select>
+                </div>
 
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {{-- Submit --}}
+                <div class="flex items-end">
+                    <button type="submit" class="btn-submit">
+                        🔍 Terapkan Filter
+                    </button>
+                </div>
 
-            {{-- Tanggal --}}
-            <div>
-                <label class="text-sm font-medium text-gray-600">Tanggal</label>
-                <input type="date" name="tanggal"
-                    value="{{ request('tanggal') }}"
-                    class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-300 border-gray-300">
-            </div>
+                {{-- Reset --}}
+                @if(request()->hasAny(['tanggal', 'status']))
+                <div class="flex items-end">
+                    <a href="{{ route('admin.rekap') }}" class="btn-reset" style="text-decoration: none; display: block; text-align: center;">
+                        🔄 Reset
+                    </a>
+                </div>
+                @endif
 
-            {{-- Tombol Filter --}}
-            <div class="flex items-end">
-                <button
-                    class="w-full bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition">
-                    Terapkan Filter
-                </button>
-            </div>
-
-            {{-- Reset --}}
-            @if(request()->has('tanggal'))
-            <div class="flex items-end">
-                <a href="{{ route('admin.rekap') }}"
-                   class="w-full px-4 py-2 bg-gray-200 rounded-lg text-center hover:bg-gray-300 transition">
-                    Reset
-                </a>
-            </div>
-            @endif
-
-        </form>
+            </form>
+        </div>
     </div>
 
     {{-- TABLE CARD --}}
-    <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6 overflow-x-auto">
+    <div class="manual-card">
+        <h2 class="section-title">📊 Data Rekap Absensi</h2>
 
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Data Rekap</h2>
+        <div class="table-wrapper">
+            <table class="table-manual">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>👤 Nama Karyawan</th>
+                        <th>📅 Tanggal</th>
+                        <th>🕐 Waktu</th>
+                        <th>✅ Status</th>
+                        <th>🔧 Metode</th>
+                        <th>🌐 IP Address</th>
+                    </tr>
+                </thead>
 
-        <table class="w-full text-sm border-collapse">
-            <thead>
-                <tr class="bg-green-50 text-gray-700 border-b">
-                    <th class="p-3 text-left">Nama</th>
-                    <th class="p-3 text-left">Tanggal</th>
-                    <th class="p-3 text-left">Waktu</th>
-                    <th class="p-3 text-left">Status</th>
-                    <th class="p-3 text-left">IP Address</th>
-                </tr>
-            </thead>
+                <tbody>
+                    @forelse($rekap as $i => $r)
+                    <tr>
+                        <td style="font-weight: 700;">{{ $i + 1 }}</td>
 
-            <tbody>
-                @forelse($rekap as $r)
-                <tr class="border-b hover:bg-gray-50">
+                        <td>
+                            <div style="display: flex; align-items: center;">
+                                <div class="user-avatar">
+                                    {{ strtoupper(substr($r->user->nama ?? 'U', 0, 1)) }}
+                                </div>
+                                <span style="font-weight: 700;">{{ $r->user->nama ?? '-' }}</span>
+                            </div>
+                        </td>
 
-                    <td class="p-3">{{ $r->user->nama ?? '-' }}</td>
+                        <td style="font-family: monospace; font-weight: 600;">
+                            {{ \Carbon\Carbon::parse($r->waktu_absen)->format('d/m/Y') }}
+                        </td>
 
-                    <td class="p-3">
-                        {{ \Carbon\Carbon::parse($r->tanggal)->format('d-m-Y') }}
-                    </td>
+                        <td style="font-family: monospace; font-weight: 600; color: #64748b;">
+                            {{ \Carbon\Carbon::parse($r->waktu_absen)->format('H:i:s') }}
+                        </td>
 
-                    <td class="p-3">
-                        {{ $r->waktu_absen ? \Carbon\Carbon::parse($r->waktu_absen)->format('H:i:s') : '-' }}
-                    </td>
+                        <td>
+                            @php
+                                $statusClass = match($r->status){
+                                    'hadir' => 'status-hadir',
+                                    'terlambat' => 'status-terlambat',
+                                    'izin','sakit' => 'status-izin',
+                                    default => 'status-alpha'
+                                };
+                            @endphp
+                            <span class="status-badge {{ $statusClass }}">
+                                {{ ucfirst($r->status) }}
+                            </span>
+                        </td>
 
-                    <td class="p-3">
-                        @php
-                        $status = strtolower($r->status);
-                        $badge = match($status) {
-                            'hadir'     => 'bg-green-100 text-green-700',
-                            'terlambat' => 'bg-yellow-100 text-yellow-700',
-                            'sakit'     => 'bg-blue-100 text-blue-700',
-                            'izin'      => 'bg-indigo-100 text-indigo-700',
-                            'alpha'     => 'bg-red-100 text-red-700',
-                            default     => 'bg-gray-200 text-gray-700',
-                        };
-                        @endphp
+                        <td style="text-transform: capitalize; font-weight: 600;">
+                            {{ strtoupper($r->metode ?? '-') }}
+                        </td>
 
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $badge }}">
-                            {{ ucfirst($r->status) }}
-                        </span>
-                    </td>
+                        <td style="font-family: monospace; font-size: 12px; color: #64748b;">
+                            {{ $r->ip_address ?? '-' }}
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <div class="empty-text">Tidak ada data absensi</div>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-                    <td class="p-3">{{ $r->ip_address ?? '-' }}</td>
-                </tr>
-
-                @empty
-                <tr>
-                    <td colspan="5" class="p-4 text-center text-gray-500 italic">
-                        Tidak ada data absensi untuk tanggal ini.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        {{-- Pagination --}}
+        @if($rekap->hasPages())
+        <div style="margin-top: 24px;">
+            {{ $rekap->links() }}
+        </div>
+        @endif
     </div>
 
 </div>
