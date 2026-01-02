@@ -411,24 +411,16 @@
             <div class="stat-icon">👥</div>
         </div>
 
-        <div class="stat-card green">
-            <div class="stat-label">✅ Status Aktif</div>
-            <div class="stat-value">{{ $users->where('status', 'aktif')->count() }}</div>
-            <div class="stat-icon">✅</div>
-        </div>
-
-        <div class="stat-card gray">
-            <div class="stat-label">⏸️ Tidak Aktif</div>
-            <div class="stat-value">{{ $users->where('status', '!=', 'aktif')->count() }}</div>
-            <div class="stat-icon">⏸️</div>
-        </div>
-
-        <div class="stat-card purple">
-            <div class="stat-label">📅 Baru Bulan Ini</div>
-            <div class="stat-value">{{ $users->where('created_at', '>=', now()->startOfMonth())->count() }}</div>
-            <div class="stat-icon">📅</div>
-        </div>
+    <div class="stat-card green">
+        <div class="stat-label">✅ Aktif Hari Ini</div>
+        <div class="stat-value">{{ $aktifHariIni }}</div>
     </div>
+
+    <div class="stat-card gray">
+        <div class="stat-label">⏸️ Tidak Absen Hari Ini</div>
+        <div class="stat-value">{{ $tidakAktifHariIni }}</div>
+    </div>
+</div>
 
     {{-- TABLE --}}
     <div class="manual-card">
@@ -460,16 +452,17 @@
                             </td>
                             
                             <td>
-                                @if($u->status === 'aktif')
-                                <span class="status-badge status-hadir">
-                                    ✅ Aktif
-                                </span>
-                                @else
-                                <span class="status-badge status-tidak-aktif">
-                                    ⏸️ Tidak Aktif
-                                </span>
-                                @endif
-                            </td>
+@if($u->absensis->count())
+    <span class="status-badge status-hadir">
+        ✅ Hadir Hari Ini
+    </span>
+@else
+    <span class="status-badge status-tidak-aktif">
+        ⏸️ Belum Absen
+    </span>
+@endif
+</td>
+
                             
                             <td style="font-family: monospace; font-weight: 600; color: #64748b;">
                                 {{ $u->created_at?->format('d/m/Y') ?? '-' }}
@@ -477,16 +470,21 @@
                             
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-action btn-edit" onclick="editUser({{ $u->id }})">
-                                        ✏️ Edit
-                                    </button>
-                                    <form method="POST" action="#" style="display: inline;" onsubmit="return confirm('🗑️ Hapus peserta ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete">
-                                            🗑️ Hapus
-                                        </button>
-                                    </form>
+                                   <button class="btn-action btn-edit"
+    onclick="window.location.href='{{ route('admin.user.edit',$u->id) }}'">
+    ✏️ Edit
+</button>
+
+                                <form method="POST"
+      action="{{ route('admin.user.delete',$u->id) }}"
+      onsubmit="return confirm('Hapus peserta ini?')">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn-action btn-delete">
+        🗑️ Hapus
+    </button>
+</form>
+
                                 </div>
                             </td>
                         </tr>

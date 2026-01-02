@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Absensi;
 use App\Models\QrToken;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod; // ← WAJIB
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -30,36 +31,55 @@ class AdminController extends Controller
     }
 
     /* ================= GRAFIK ================= */
-    public function graphFilter()
-    {
-        $today = Carbon::today('Asia/Jakarta');
-        $start = $today->copy()->startOfWeek();
+    public function graphFilter(Request $request)
+{
+    $today = Carbon::today('Asia/Jakarta');
+    $start = $today->copy()->startOfWeek(Carbon::MONDAY);
 
-        $labels = $bestTimes = $latestTimes = $bestNames = $latestNames = [];
+    $labels = [];
+    $bestTimes = [];
+    $latestTimes = [];
+    $bestNames = [];
+    $latestNames = [];
 
-        foreach (Carbon::period($start, $today) as $date) {
-            if ($date->isWeekend()) continue;
+    foreach (CarbonPeriod::create($start, $today) as $date) {
+        if ($date->isWeekend()) continue;
 
-            $labels[] = $date->translatedFormat('d M');
+        $labels[] = $date->translatedFormat('d M');
 
-            $records = Absensi::with('user')
-                ->whereDate('waktu_absen', $date)->orderBy('waktu_absen')->get();
+        $records = Absensi::with('user')
+            ->whereDate('waktu_absen', $date->toDateString())
+            ->orderBy('waktu_absen')
+            ->get();
 
-            if ($records->isEmpty()) {
-                $bestTimes[] = $latestTimes[] = null;
-                $bestNames[] = $latestNames[] = '-';
-            } else {
-                $bestNames[] = $records->first()->user->nama ?? '-';
-                $latestNames[] = $records->last()->user->nama ?? '-';
-                $bestTimes[] = Carbon::parse($records->first()->waktu_absen)->hour * 60;
-                $latestTimes[] = Carbon::parse($records->last()->waktu_absen)->hour * 60;
-            }
+        if ($records->isEmpty()) {
+            $bestTimes[] = null;
+            $latestTimes[] = null;
+            $bestNames[] = '-';
+            $latestNames[] = '-';
+        } else {
+            $first = $records->first();
+            $last  = $records->last();
+
+            $bestNames[]   = $first->user->nama ?? '-';
+            $latestNames[] = $last->user->nama ?? '-';
+
+            $bestTimes[]   = Carbon::parse($first->waktu_absen)->hour * 60
+                           + Carbon::parse($first->waktu_absen)->minute;
+
+            $latestTimes[] = Carbon::parse($last->waktu_absen)->hour * 60
+                           + Carbon::parse($last->waktu_absen)->minute;
         }
-
-        return response()->json(compact(
-            'labels','bestTimes','latestTimes','bestNames','latestNames'
-        ));
     }
+
+    return response()->json([
+        'labels'       => $labels,
+        'bestTimes'    => $bestTimes,
+        'latestTimes'  => $latestTimes,
+        'bestNames'    => $bestNames,
+        'latestNames'  => $latestNames,
+    ]);
+}
 public function rankingKehadiran()
 {
     return response()->json(
@@ -212,10 +232,35 @@ public function storeAbsensiManual(Request $request)
 /* ================= MANAJEMEN PESERTA ================= */
 public function manageUser()
 {
-    return view('admin.users', [
-        'users' => User::orderBy('nama')->get()
-    ]);
+    $today = Carbon::today('Asia/Jakarta');
+
+    // User + absensi hari ini
+    $users = User::with(['absensis' => function ($q) use ($today) {
+        $q->whereDate('waktu_absen', $today);
+    }])->orderBy('nama')->get();
+
+    // Statistik BENAR
+    $total = $users->count();
+
+    $aktifHariIni = Absensi::whereDate('waktu_absen', $today)
+        ->distinct('user_id')
+        ->count('user_id');
+
+    $tidakAktifHariIni = $total - $aktifHariIni;
+
+    $baruBulanIni = User::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+
+    return view('admin.users', compact(
+        'users',
+        'total',
+        'aktifHariIni',
+        'tidakAktifHariIni',
+        'baruBulanIni'
+    ));
 }
+
 
 /* ================= UPDATE STATUS ABSENSI ================= */
 public function updateAbsensiStatus(Request $request, $id)
@@ -231,6 +276,33 @@ public function updateAbsensiStatus(Request $request, $id)
     ]);
 
     return back()->with('success', 'Status absensi berhasil diperbarui.');
+}
+
+public function editUser($id)
+{
+    $user = User::findOrFail($id);
+    return view('admin.edit-user', compact('user'));
+}
+
+public function updateUser(Request $request, $id)
+{
+    $request->validate([
+        'nama' => 'required|string|max:255'
+    ]);
+
+    User::findOrFail($id)->update([
+        'nama' => $request->nama
+    ]);
+
+    return redirect()->route('admin.user.index')
+        ->with('success','Data peserta berhasil diperbarui');
+}
+
+public function deleteUser($id)
+{
+    User::findOrFail($id)->delete();
+
+    return back()->with('success','Peserta berhasil dihapus');
 }
 
     /* ================= SETTINGS ================= */

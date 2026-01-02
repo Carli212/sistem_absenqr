@@ -580,20 +580,23 @@
 
         </div>
 
-        <!-- ==== GRAFIK & TABEL ==== -->
+{{-- ================= GRAFIK & RANKING ================= --}}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <!-- Grafik (2 kolom) -->
+            {{-- ===== GRAFIK ===== --}}
             <div class="lg:col-span-2 chart-card">
                 <div class="chart-header">
                     <div>
-                        <h3 class="chart-title">📈 Grafik Kehadiran — <span id="rangeLabel">(Realtime)</span></h3>
+                        <h3 class="chart-title">
+                            📈 Grafik Kehadiran — <span id="rangeLabel">Minggu Ini</span>
+                        </h3>
                         <p class="chart-subtitle">
-                            Perbandingan siswa paling cepat hadir & paling terlambat (Senin–Jumat)
+                            Tepat waktu vs Terlambat (Realtime)
                         </p>
                     </div>
 
-                    <!-- Dropdown Filter -->
                     <select id="rangeSelect">
                         <option value="minggu-ini">Minggu Ini</option>
                         <option value="minggu-lalu">Minggu Lalu</option>
@@ -601,224 +604,170 @@
                     </select>
                 </div>
 
-                <canvas id="attendanceChart" style="max-height: 280px;"></canvas>
+                <canvas id="attendanceChart" height="220"></canvas>
 
-                <!-- Audio Notifikasi -->
                 <audio id="notifSound">
-                    <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+                    <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3">
                 </audio>
 
-                <!-- Ranking Card -->
+                {{-- ===== RANKING ===== --}}
                 <div class="ranking-card">
                     <h3>🏆 Ranking Kehadiran Bulan Ini</h3>
                     <table class="w-full text-sm">
-                        <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                            <tr>
-                                <th class="p-3 text-left font-bold text-gray-700">#</th>
-                                <th class="p-3 text-left font-bold text-gray-700">Nama</th>
-                                <th class="p-3 text-left font-bold text-gray-700">Jumlah Hadir</th>
-                            </tr>
-                        </thead>
                         <tbody id="rankingTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <script>
-            let chart;
-            let lastCount = 0;
-
-            async function loadChart(range = 'minggu-ini') {
-                const res = await fetch(`/admin/graph?range=${range}`);
-                const data = await res.json();
-
-                const ctx = document.getElementById("attendanceChart").getContext("2d");
-
-                const formatTime = (min) => {
-                    if (min === null) return "-";
-                    const h = Math.floor(min / 60);
-                    const m = min % 60;
-                    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-                };
-
-                if (chart) chart.destroy();
-
-                chart = new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: data.labels,
-                        datasets: [
-                            {
-                                label: "⚡ Hadir Paling Awal",
-                                data: data.bestTimes,
-                                backgroundColor: "rgba(16,185,129,0.8)",
-                                borderColor: "rgba(16,185,129,1)",
-                                borderWidth: 2,
-                                borderRadius: 10,
-                            },
-                            {
-                                label: "🐌 Hadir Paling Akhir",
-                                data: data.latestTimes,
-                                backgroundColor: "rgba(239,68,68,0.8)",
-                                borderColor: "rgba(239,68,68,1)",
-                                borderWidth: 2,
-                                borderRadius: 10,
-                            }
-                        ]
-                    },
-                    options: {
-                        animation: {
-                            duration: 1200,
-                            easing: 'easeOutCubic'
-                        },
-                        scales: {
-                            y: {
-                                ticks: { 
-                                    callback: value => formatTime(value),
-                                    font: { weight: 600 }
-                                },
-                                title: { 
-                                    display: true, 
-                                    text: "Waktu (HH:MM)",
-                                    font: { weight: 700, size: 14 }
-                                },
-                                grid: {
-                                    color: 'rgba(0,0,0,0.05)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    font: { weight: 600, size: 13 },
-                                    padding: 18
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0,0,0,0.85)',
-                                padding: 14,
-                                cornerRadius: 10,
-                                titleFont: { weight: 700 },
-                                bodyFont: { weight: 600 },
-                                callbacks: {
-                                    afterBody: function(context) {
-                                        let idx = context[0].dataIndex;
-                                        return [
-                                            "",
-                                            `👤 Datang Pertama: ${data.bestNames[idx]}`,
-                                            `🚪 Datang Terakhir: ${data.latestNames[idx]}`
-                                        ];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-
-                /** 🔔 Notifikasi Realtime **/
-                const currentCount = data.bestNames.filter(v => v !== "-").length;
-                if (currentCount > lastCount) {
-                    document.getElementById('notifSound').play();
-                }
-                lastCount = currentCount;
-            }
-
-            /** Realtime Refresh setiap 5 detik */
-            setInterval(() => {
-                const range = document.getElementById("rangeSelect").value;
-                loadChart(range);
-            }, 5000);
-
-            /** Filter ubah range */
-            document.getElementById('rangeSelect').addEventListener('change', (e) => {
-                document.getElementById('rangeLabel').innerText = 
-                    e.target.options[e.target.selectedIndex].text;
-                loadChart(e.target.value);
-            });
-
-            /** Load awal */
-            loadChart();
-
-            /** Load Ranking */
-            fetch("/admin/ranking")
-                .then(res => res.json())
-                .then(data => {
-                    let tbody = "";
-                    data.forEach((row, index) => {
-                        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-                        tbody += `
-                            <tr class="border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-600">${medal} ${index+1}</td>
-                                <td class="p-3 font-semibold text-gray-800">${row.nama}</td>
-                                <td class="p-3 font-bold text-green-600">${row.total_hadir}</td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('rankingTable').innerHTML = tbody;
-                });
-            </script>
-
-            <!-- Tabel Kehadiran Hari Ini (1 kolom) -->
+            {{-- ===== TABEL HARI INI ===== --}}
             <div class="table-card">
-                <div class="table-header">
-                    <h4 class="table-title">📋 Kehadiran Hari Ini</h4>
-                    <p class="table-count">{{ count($absensiHariIni) }} siswa telah absen</p>
-                </div>
-
-                <div style="max-height: 500px; overflow-y: auto;">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>Status</th>
-                                <th>Waktu</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="todayList">
-                            @forelse($absensiHariIni as $a)
-                            <tr>
-                                <td style="font-weight: 600;">{{ $a->user->nama }}</td>
-                                <td>
-                                    <span class="status-badge 
-                                        @if($a->status == 'hadir') status-hadir
-                                        @elseif($a->status == 'terlambat') status-terlambat
-                                        @elseif($a->status == 'izin') status-izin
-                                        @elseif($a->status == 'sakit') status-sakit
-                                        @else status-alpha
-                                        @endif
-                                    ">
-                                        {{ ucfirst($a->status) }}
-                                    </span>
-                                </td>
-                                <td style="font-weight: 600; color: #64748b;">
-                                    {{ $a->waktu_absen ? \Carbon\Carbon::parse($a->waktu_absen)->format('H:i') : '-' }}
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon">📭</div>
-                                        <div class="empty-state-text">Belum ada absensi hari ini</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-
-                    </table>
-                </div>
+                <h4 class="table-title">📋 Kehadiran Hari Ini</h4>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Status</th>
+                            <th>Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($absensiHariIni as $a)
+                        <tr>
+                            <td>{{ $a->user->nama }}</td>
+                            <td>{{ ucfirst($a->status) }}</td>
+                            <td>{{ $a->waktu_absen ? \Carbon\Carbon::parse($a->waktu_absen)->format('H:i') : '-' }}</td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="3">Belum ada absensi</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
         </div>
-
     </div>
 </div>
 
+{{-- ================= SCRIPT FINAL (SATU-SATUNYA) ================= --}}
+<script>
+let chart = null;
+let lastCount = 0;
+
+function formatTime(min) {
+    if (!min) return '-';
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+async function loadChart(range = 'minggu-ini') {
+    const res = await fetch(`/admin/graph/filter?range=${range}`);
+    const data = await res.json();
+
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Waktu Kehadiran',
+                data: data.bestTimes.map(v => v ?? 0),
+                backgroundColor: data.bestTimes.map(v => {
+                    if (!v) return '#cbd5e1';        // kosong
+                    if (v <= 450) return '#10b981'; // <= 07:30 (hijau)
+                    if (v <= 480) return '#f59e0b'; // <= 08:00 (kuning)
+                    return '#ef4444';               // > 08:00 (merah)
+                }),
+                borderRadius: 8
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            animation: { duration: 800 },
+            scales: {
+                x: {
+                    ticks: { callback: v => formatTime(v) },
+                    title: {
+                        display: true,
+                        text: 'Jam Kehadiran'
+                    }
+                }
+            },
+            plugins: {
+                annotation: {
+                    annotations: {
+                        batasTepat: {
+                            type: 'line',
+                            xMin: 450,
+                            xMax: 450,
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            label: {
+                                content: '07:30 Tepat Waktu',
+                                enabled: true,
+                                position: 'start'
+                            }
+                        },
+                        batasTelat: {
+                            type: 'line',
+                            xMin: 480,
+                            xMax: 480,
+                            borderColor: '#ef4444',
+                            borderWidth: 2,
+                            label: {
+                                content: '08:00 Terlambat',
+                                enabled: true,
+                                position: 'start'
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `⏰ ${formatTime(ctx.raw)}`,
+                        afterBody: ctx => {
+                            const i = ctx[0].dataIndex;
+                            return `👤 ${data.bestNames[i] ?? '-'}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const count = data.bestNames.filter(v => v && v !== '-').length;
+    if (count > lastCount) document.getElementById('notifSound').play();
+    lastCount = count;
+}
+
+// realtime
+setInterval(() => {
+    loadChart(document.getElementById('rangeSelect').value);
+}, 5000);
+
+document.getElementById('rangeSelect').addEventListener('change', e => {
+    document.getElementById('rangeLabel').innerText =
+        e.target.options[e.target.selectedIndex].text;
+    loadChart(e.target.value);
+});
+
+loadChart();
+
+// ranking
+fetch('/admin/ranking')
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('rankingTable').innerHTML =
+            data.map((r,i)=>`
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${r.nama}</td>
+                    <td>${r.total_hadir}</td>
+                </tr>
+            `).join('');
+            
+    });
+</script>
 @endsection

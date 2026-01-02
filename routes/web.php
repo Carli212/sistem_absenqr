@@ -150,8 +150,18 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::get('/ranking', [AdminController::class, 'rankingKehadiran'])->name('admin.ranking');
 
-    Route::get('/users',[AdminController::class,'manageUser'])
+    // ================= USERS MANAGEMENT =================
+Route::get('/users', [AdminController::class,'manageUser'])
     ->name('admin.user.index');
+
+Route::get('/users/{id}/edit', [AdminController::class,'editUser'])
+    ->name('admin.user.edit');
+
+Route::put('/users/{id}', [AdminController::class,'updateUser'])
+    ->name('admin.user.update');
+
+Route::delete('/users/{id}', [AdminController::class,'deleteUser'])
+    ->name('admin.user.delete');
 
     // Logout Admin
     Route::post('/logout', [AdminAuthController::class, 'logoutAdmin'])

@@ -4,6 +4,13 @@
 @section('content')
 
 <style>
+body {
+    margin: 0;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Scan Container */
 .scan-container {
     min-height: 100vh;
     display: flex;
@@ -11,98 +18,55 @@
     justify-content: center;
     align-items: center;
     padding: 24px;
-    background: linear-gradient(180deg, 
-        #87CEEB 0%,
-        #98D8E8 25%,
-        #7EC8E3 50%,
-        #5FB3D1 75%,
-        #4A9AB0 100%
-    );
     position: relative;
     overflow: hidden;
 }
 
-/* Matahari */
-.scan-container::before {
-    content: '';
+/* Animated Background Elements */
+.bg-circle {
     position: absolute;
-    top: 10%;
-    right: 10%;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, #FFE66D 0%, #FFB347 100%);
     border-radius: 50%;
-    box-shadow: 0 0 50px rgba(255, 230, 109, 0.6);
-    animation: sunshine 4s ease-in-out infinite;
-    z-index: 0;
+    opacity: 0.1;
+    animation: float 20s ease-in-out infinite;
 }
 
-@keyframes sunshine {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.9; }
+.bg-circle-1 {
+    width: 400px;
+    height: 400px;
+    background: white;
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
 }
 
-/* Awan */
-.cloud-scan {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 50px;
-    z-index: 0;
+.bg-circle-2 {
+    width: 300px;
+    height: 300px;
+    background: white;
+    bottom: -50px;
+    right: -50px;
+    animation-delay: 5s;
 }
 
-.cloud-scan-1 {
-    top: 12%;
-    left: 8%;
-    width: 160px;
-    height: 45px;
-    box-shadow: 
-        60px 12px 0 -6px rgba(255, 255, 255, 0.6),
-        110px 6px 0 -4px rgba(255, 255, 255, 0.5);
-    animation: floatCloud 28s ease-in-out infinite;
+.bg-circle-3 {
+    width: 200px;
+    height: 200px;
+    background: white;
+    top: 50%;
+    right: 10%;
+    animation-delay: 10s;
 }
 
-.cloud-scan-2 {
-    top: 20%;
-    right: 15%;
-    width: 130px;
-    height: 38px;
-    box-shadow: 
-        50px 10px 0 -5px rgba(255, 255, 255, 0.6);
-    animation: floatCloud 32s ease-in-out infinite;
-    animation-delay: 4s;
-}
-
-@keyframes floatCloud {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(20px); }
-}
-
-/* Pegunungan */
-.mountains-scan {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    background: 
-        linear-gradient(135deg, transparent 50%, #2d5f3f 50%) 0 0,
-        linear-gradient(-135deg, transparent 50%, #3a7754 50%) 0 0,
-        linear-gradient(45deg, transparent 50%, #4a9668 50%) 100% 0,
-        linear-gradient(-45deg, transparent 50%, #5db07d 50%) 100% 0;
-    background-size: 25% 100%, 25% 100%, 25% 100%, 25% 100%;
-    background-repeat: no-repeat;
-    z-index: 0;
-}
-
-/* Rumput */
-.grass-scan {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    background: linear-gradient(180deg, #5db07d 0%, #4a9668 100%);
-    z-index: 0;
+@keyframes float {
+    0%, 100% { 
+        transform: translate(0, 0) scale(1);
+    }
+    33% { 
+        transform: translate(30px, -30px) scale(1.1);
+    }
+    66% { 
+        transform: translate(-20px, 20px) scale(0.9);
+    }
 }
 
 /* Scan Card */
@@ -110,20 +74,31 @@
     position: relative;
     z-index: 10;
     background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 20px 60px rgba(45, 95, 63, 0.25);
-    border: 3px solid #a5d6a7;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 20px 60px rgba(102, 126, 234, 0.3),
+        0 0 1px rgba(255, 255, 255, 0.8) inset;
+    border: 2px solid rgba(102, 126, 234, 0.2);
     border-radius: 28px;
-    max-width: 480px;
+    max-width: 520px;
     width: 95%;
-    padding: 40px 36px;
+    padding: 44px 40px;
     text-align: center;
-    animation: slideUp 0.5s ease;
+    animation: slideUp 0.6s ease;
+    transition: all 0.3s ease;
+}
+
+.scan-card:hover {
+    box-shadow: 
+        0 25px 70px rgba(102, 126, 234, 0.4),
+        0 0 1px rgba(255, 255, 255, 0.8) inset;
+    transform: translateY(-5px);
 }
 
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -131,180 +106,358 @@
     }
 }
 
+/* Scan Header */
 .scan-header {
-    margin-bottom: 28px;
+    margin-bottom: 32px;
 }
 
 .scan-title {
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 900;
-    background: linear-gradient(135deg, #2d5f3f 0%, #4a9668 100%);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 }
 
 .scan-subtitle {
-    font-size: 14px;
-    color: #4a9668;
+    font-size: 15px;
+    color: #64748b;
     font-weight: 600;
-    line-height: 1.5;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 /* Camera Area */
 #reader {
-    min-height: 300px;
+    min-height: 320px;
     width: 100%;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
-    border: 3px solid #81c784;
-    box-shadow: 0 4px 16px rgba(74, 150, 104, 0.15);
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-    margin-bottom: 20px;
+    border: 3px solid #c4b5fd;
+    box-shadow: 
+        0 8px 32px rgba(102, 126, 234, 0.2),
+        0 0 0 1px rgba(102, 126, 234, 0.1) inset;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    margin-bottom: 24px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#reader:hover {
+    border-color: #a78bfa;
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
 }
 
 #reader video {
     pointer-events: none !important;
-    border-radius: 13px;
+    border-radius: 17px;
+}
+
+/* Scanning Animation Overlay */
+.scan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.scan-line {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        #667eea 50%, 
+        transparent 100%);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+    animation: scanning 2s ease-in-out infinite;
+}
+
+@keyframes scanning {
+    0% { top: 10%; opacity: 0; }
+    50% { opacity: 1; }
+    100% { top: 90%; opacity: 0; }
 }
 
 /* Status Text */
 #status {
-    margin-top: 16px;
-    font-size: 14px;
-    color: #2d5f3f;
+    margin-top: 20px;
+    font-size: 15px;
+    color: #1e293b;
     font-weight: 700;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-    border-radius: 12px;
-    border: 2px solid #a5d6a7;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    border-radius: 14px;
+    border: 2px solid #c4b5fd;
+    display: inline-block;
+    min-width: 280px;
+    transition: all 0.3s ease;
+}
+
+#status:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+}
+
+/* Status Icons Animation */
+.status-processing {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
 }
 
 /* Button Fallback */
 .fallback-btn {
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-    border: 2px solid #a5d6a7;
-    color: #2d5f3f;
-    border-radius: 12px;
-    font-size: 13px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    border: 2px solid #c4b5fd;
+    color: #4338ca;
+    border-radius: 14px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     display: none;
-    margin-top: 16px;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .fallback-btn:hover {
-    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    background: linear-gradient(135deg, #c7d2fe 0%, #a78bfa 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 150, 104, 0.25);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.fallback-btn:active {
+    transform: translateY(0);
 }
 
 /* Back Button */
 .back-btn {
     position: relative;
     z-index: 50;
-    margin-top: 28px;
-    padding: 14px 32px;
-    background: white;
-    color: #2d5f3f;
+    margin-top: 32px;
+    padding: 16px 36px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    color: #4338ca;
     font-weight: 700;
-    border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(45, 95, 63, 0.2);
-    border: 3px solid #a5d6a7;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
     font-size: 15px;
     letter-spacing: 0.3px;
 }
 
 .back-btn:hover {
-    background: #e8f5e9;
+    background: white;
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(45, 95, 63, 0.3);
+    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.35);
+    border-color: #c4b5fd;
 }
 
 .back-btn:active {
     transform: translateY(-1px);
 }
 
+/* Info Badge */
+.info-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #fcd34d;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #92400e;
+    margin-top: 16px;
+    animation: slideUp 0.8s ease;
+}
+
+/* Camera Corner Decorations */
+.camera-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #8b5cf6;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.corner-tl {
+    top: 10px;
+    left: 10px;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 8px 0 0 0;
+}
+
+.corner-tr {
+    top: 10px;
+    right: 10px;
+    border-left: none;
+    border-bottom: none;
+    border-radius: 0 8px 0 0;
+}
+
+.corner-bl {
+    bottom: 10px;
+    left: 10px;
+    border-right: none;
+    border-top: none;
+    border-radius: 0 0 0 8px;
+}
+
+.corner-br {
+    bottom: 10px;
+    right: 10px;
+    border-left: none;
+    border-top: none;
+    border-radius: 0 0 8px 0;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .scan-card {
-        padding: 32px 24px;
+        padding: 36px 28px;
     }
 
     .scan-title {
-        font-size: 24px;
+        font-size: 26px;
+    }
+
+    .scan-subtitle {
+        font-size: 14px;
     }
 
     #reader {
-        min-height: 250px;
+        min-height: 280px;
     }
 
-    .mountains-scan {
-        height: 25%;
+    .camera-corner {
+        width: 30px;
+        height: 30px;
     }
 
-    .grass-scan {
-        height: 50px;
-    }
-
-    .scan-container::before {
-        width: 80px;
-        height: 80px;
+    .bg-circle-1,
+    .bg-circle-2,
+    .bg-circle-3 {
+        display: none;
     }
 }
 
 /* SweetAlert Custom Style */
 .swal2-popup {
-    border: 3px solid #a5d6a7 !important;
-    border-radius: 20px !important;
+    border: 3px solid #c4b5fd !important;
+    border-radius: 24px !important;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3) !important;
 }
 
 .swal2-confirm {
-    background: linear-gradient(135deg, #4a9668 0%, #2d5f3f 100%) !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     border: none !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     font-weight: 700 !important;
-    padding: 12px 28px !important;
+    padding: 14px 32px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.swal2-confirm:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
 }
 
 .swal2-title {
-    color: #1b4332 !important;
+    color: #1e293b !important;
     font-weight: 900 !important;
+}
+
+.swal2-html-container {
+    color: #64748b !important;
+    font-weight: 600 !important;
+}
+
+.swal2-icon {
+    border-width: 3px !important;
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    border-radius: 50%;
+    border-top-color: #667eea;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 </style>
 
 <div class="scan-container">
-    <!-- Awan -->
-    <div class="cloud-scan cloud-scan-1"></div>
-    <div class="cloud-scan cloud-scan-2"></div>
-    
-    <!-- Pegunungan -->
-    <div class="mountains-scan"></div>
-    
-    <!-- Rumput -->
-    <div class="grass-scan"></div>
+    <!-- Background Circles -->
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
 
-    <!-- Card Scan -->
+    <!-- Scan Card -->
     <div class="scan-card">
         
         <div class="scan-header">
-            <h1 class="scan-title">📷 Scan Kode QR</h1>
+            <h1 class="scan-title">
+                📷 Scan Kode QR
+            </h1>
             <p class="scan-subtitle">
-                Arahkan kamera ke QR Code yang diberikan oleh admin untuk melakukan absensi
+                Arahkan kamera ke QR Code yang diberikan oleh admin untuk melakukan absensi dengan cepat dan mudah
             </p>
         </div>
 
-        <!-- Area Kamera -->
-        <div id="reader"></div>
+        <!-- Camera Area -->
+        <div id="reader" style="position: relative;">
+            <!-- Camera Corners -->
+            <div class="camera-corner corner-tl"></div>
+            <div class="camera-corner corner-tr"></div>
+            <div class="camera-corner corner-bl"></div>
+            <div class="camera-corner corner-br"></div>
+            
+            <!-- Scan Line -->
+            <div class="scan-overlay">
+                <div class="scan-line"></div>
+            </div>
+        </div>
 
         <p id="status">🔍 Menunggu pemindaian...</p>
+
+        <div class="info-badge">
+            💡 Pastikan QR Code terlihat jelas di kamera
+        </div>
 
         <form id="scanForm" action="{{ route('user.scan.process') }}" method="POST" class="hidden">
             @csrf
@@ -312,12 +465,12 @@
         </form>
 
         <button id="btnFallback" class="fallback-btn">
-            📁 Upload Gambar (Fallback)
+            📁 Upload Gambar QR (Fallback)
         </button>
         <input type="file" id="filePicker" accept="image/*" class="hidden" />
     </div>
 
-    <!-- Tombol Kembali -->
+    <!-- Back Button -->
     <a href="{{ route('login.siswa.show') }}" class="back-btn">
         ⬅️ Kembali ke Login
     </a>
@@ -332,24 +485,36 @@
 let html5QrCode;
 const statusEl = document.getElementById('status');
 
+function updateStatus(text, isProcessing = false) {
+    statusEl.innerHTML = text;
+    if (isProcessing) {
+        statusEl.classList.add('status-processing');
+    } else {
+        statusEl.classList.remove('status-processing');
+    }
+}
+
 function startScanner() {
-    statusEl.innerText = "📸 Mengaktifkan kamera...";
+    updateStatus('<span class="loading-spinner"></span>📸 Mengaktifkan kamera...', true);
     html5QrCode = new Html5Qrcode("reader");
 
     html5QrCode.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
         onScanSuccess
     ).then(() => {
-        statusEl.innerText = "📷 Kamera aktif, arahkan ke QR Code";
-    }).catch(() => {
-        statusEl.innerText = "⚠️ Kamera tidak tersedia";
+        updateStatus('📷 Kamera aktif, arahkan ke QR Code');
+    }).catch((err) => {
+        console.error(err);
+        updateStatus('⚠️ Kamera tidak tersedia atau tidak diizinkan');
+        // Show fallback button if camera fails
+        document.getElementById('btnFallback').style.display = 'inline-block';
     });
 }
 
 function onScanSuccess(decodedText) {
     html5QrCode.stop().catch(() => {});
-    statusEl.innerText = "⏳ Memproses QR...";
+    updateStatus('<span class="loading-spinner"></span>⏳ Memproses QR Code...', true);
     postCode(decodedText);
 }
 
@@ -359,33 +524,84 @@ function postCode(kode) {
         credentials: "same-origin",
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
         },
         body: JSON.stringify({ kode })
     })
     .then(res => res.json())
     .then(data => {
         if (data.status === 'success') {
-            Swal.fire('✅ Berhasil', data.message, 'success')
-                .then(() => window.location.href = "{{ route('user.dashboard') }}");
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Berhasil!',
+                text: data.message,
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            }).then(() => {
+                window.location.href = "{{ route('user.dashboard') }}";
+            });
         }
         else if (data.status === 'info') {
-            Swal.fire('ℹ️ Info', data.message, 'info')
-                .then(() => window.location.href = "{{ route('user.dashboard') }}");
+            Swal.fire({
+                icon: 'info',
+                title: 'ℹ️ Informasi',
+                text: data.message,
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            }).then(() => {
+                window.location.href = "{{ route('user.dashboard') }}";
+            });
         }
         else {
-            Swal.fire('❌ Gagal', data.message, 'error')
-                .then(() => startScanner());
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Gagal',
+                text: data.message,
+                confirmButtonText: 'Coba Lagi',
+                allowOutsideClick: false
+            }).then(() => {
+                updateStatus('🔍 Menunggu pemindaian...');
+                startScanner();
+            });
         }
     })
-    .catch(() => {
-        Swal.fire('❌ Error', 'Gagal terhubung ke server', 'error');
-        startScanner();
+    .catch((error) => {
+        console.error(error);
+        Swal.fire({
+            icon: 'error',
+            title: '❌ Error',
+            text: 'Gagal terhubung ke server. Silakan coba lagi.',
+            confirmButtonText: 'Coba Lagi',
+            allowOutsideClick: false
+        }).then(() => {
+            updateStatus('🔍 Menunggu pemindaian...');
+            startScanner();
+        });
     });
 }
 
+// Fallback button handler
+document.getElementById('btnFallback').addEventListener('click', () => {
+    document.getElementById('filePicker').click();
+});
+
+document.getElementById('filePicker').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        updateStatus('<span class="loading-spinner"></span>📤 Memproses gambar...', true);
+        html5QrCode.scanFile(file, true)
+            .then(decodedText => {
+                postCode(decodedText);
+            })
+            .catch(() => {
+                Swal.fire('❌ Gagal', 'QR Code tidak terdeteksi pada gambar', 'error');
+                updateStatus('🔍 Menunggu pemindaian...');
+            });
+    }
+});
+
 window.addEventListener('load', startScanner);
 </script>
-
 
 @endsection

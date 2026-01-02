@@ -6,207 +6,7 @@
     body {
         margin: 0;
         overflow-x: hidden;
-    }
-
-    /* Nature Background Scene */
-    .nature-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #b8e6f0 100%);
-    }
-
-    /* Sun */
-    .sun {
-        position: absolute;
-        top: 60px;
-        right: 120px;
-        width: 80px;
-        height: 80px;
-        background: radial-gradient(circle, #FFD700 0%, #FFA500 60%, #FF8C00 100%);
-        border-radius: 50%;
-        box-shadow: 0 0 60px rgba(255, 215, 0, 0.6);
-        animation: sunPulse 4s ease-in-out infinite;
-    }
-
-    @keyframes sunPulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.05);
-        }
-    }
-
-    /* Mountains */
-    .mountain-far {
-        position: absolute;
-        bottom: 200px;
-        width: 100%;
-        height: 250px;
-        background: linear-gradient(to top, #4a5f7a 0%, #8da3c5 100%);
-        clip-path: polygon(0% 100%, 15% 40%, 30% 60%, 45% 20%, 60% 50%, 75% 30%, 90% 55%, 100% 100%);
-        opacity: 0.5;
-    }
-
-    .mountain-near {
-        position: absolute;
-        bottom: 150px;
-        width: 100%;
-        height: 300px;
-        background: linear-gradient(to top, #2d4a3e 0%, #4a8b6a 100%);
-        clip-path: polygon(0% 100%, 20% 50%, 40% 70%, 55% 25%, 70% 60%, 85% 40%, 100% 100%);
-        opacity: 0.7;
-    }
-
-    /* Clouds */
-    .cloud {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 100px;
-        animation: cloudMove 50s linear infinite;
-    }
-
-    .cloud::before,
-    .cloud::after {
-        content: '';
-        position: absolute;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 100px;
-    }
-
-    .cloud1 {
-        width: 100px;
-        height: 35px;
-        top: 80px;
-        left: -150px;
-    }
-
-    .cloud1::before {
-        width: 45px;
-        height: 45px;
-        top: -22px;
-        left: 18px;
-    }
-
-    .cloud1::after {
-        width: 55px;
-        height: 40px;
-        top: -18px;
-        right: 18px;
-    }
-
-    .cloud2 {
-        width: 120px;
-        height: 40px;
-        top: 150px;
-        left: -200px;
-        animation-duration: 60s;
-        animation-delay: 5s;
-    }
-
-    .cloud2::before {
-        width: 50px;
-        height: 50px;
-        top: -25px;
-        left: 20px;
-    }
-
-    .cloud2::after {
-        width: 60px;
-        height: 45px;
-        top: -20px;
-        right: 20px;
-    }
-
-    @keyframes cloudMove {
-        from {
-            transform: translateX(0);
-        }
-
-        to {
-            transform: translateX(calc(100vw + 300px));
-        }
-    }
-
-    /* Birds */
-    .bird {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        animation: birdFly 30s linear infinite;
-    }
-
-    .bird::before,
-    .bird::after {
-        content: '';
-        position: absolute;
-        background: #333;
-        width: 12px;
-        height: 2px;
-        border-radius: 2px;
-        top: 8px;
-    }
-
-    .bird::before {
-        left: -6px;
-        transform: rotate(-20deg);
-        animation: wingFlap 0.5s ease-in-out infinite;
-    }
-
-    .bird::after {
-        right: -6px;
-        transform: rotate(20deg);
-        animation: wingFlap 0.5s ease-in-out infinite 0.25s;
-    }
-
-    .bird1 {
-        top: 100px;
-        left: -40px;
-    }
-
-    .bird2 {
-        top: 130px;
-        left: -60px;
-        animation-delay: 4s;
-        animation-duration: 35s;
-    }
-
-    @keyframes birdFly {
-        from {
-            transform: translate(0, 0);
-        }
-
-        to {
-            transform: translateX(calc(100vw + 100px));
-        }
-    }
-
-    @keyframes wingFlap {
-
-        0%,
-        100% {
-            transform: rotate(-20deg);
-        }
-
-        50% {
-            transform: rotate(-30deg);
-        }
-    }
-
-    /* Ground */
-    .ground {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 150px;
-        background: linear-gradient(to bottom, #4a8b3f 0%, #2d5a28 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
     /* Dashboard Content */
@@ -217,167 +17,429 @@
         padding: 20px;
     }
 
-    .dashboard-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.5);
+    /* Card Styling */
+    .manual-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 36px;
+        box-shadow: 
+            0 10px 40px rgba(102, 126, 234, 0.15),
+            0 0 1px rgba(255, 255, 255, 0.8) inset;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        transition: all 0.3s ease;
+        margin-bottom: 32px;
+    }
+
+    .manual-card:hover {
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 28px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 24px;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+        border-radius: 20px;
+        padding: 28px;
+        border: 2px solid;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        opacity: 0.1;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card.purple {
+        border-color: #c4b5fd;
+    }
+
+    .stat-card.purple::before {
+        background: #8b5cf6;
+    }
+
+    .stat-card.green {
+        border-color: #6ee7b7;
+    }
+
+    .stat-card.green::before {
+        background: #10b981;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 12px;
+    }
+
+    .stat-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.5;
+    }
+
+    .stat-icon {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        font-size: 64px;
+        opacity: 0.15;
+    }
+
+    /* Profile Section */
+    .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 32px;
+        padding-bottom: 32px;
+        border-bottom: 2px solid #f1f5f9;
     }
 
     .profile-pic {
-        width: 100px;
-        height: 100px;
-        border-radius: 12px;
+        width: 120px;
+        height: 120px;
+        border-radius: 24px;
         object-fit: cover;
-        border: 3px solid #40c057;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 4px solid #667eea;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
     }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #4a8b3f 0%, #2d5a28 100%);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 10px;
+    .profile-pic:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+    }
+
+    .profile-info h3 {
+        font-size: 24px;
+        font-weight: 900;
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .profile-info p {
+        font-size: 14px;
+        color: #64748b;
         font-weight: 600;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
         border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
         cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 12px rgba(74, 139, 63, 0.3);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        text-decoration: none;
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(74, 139, 63, 0.4);
+        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4);
     }
 
     .btn-danger {
-        background: linear-gradient(135deg, #e03131 0%, #c92a2a 100%);
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         color: white;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-weight: 600;
         border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
         cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 12px rgba(224, 49, 49, 0.3);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .btn-danger:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(224, 49, 49, 0.4);
+        box-shadow: 0 6px 24px rgba(239, 68, 68, 0.4);
     }
 
-    .btn-info {
-        background: linear-gradient(135deg, #1c7ed6 0%, #1864ab 100%);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 12px rgba(28, 126, 214, 0.3);
-    }
-
-    .btn-info:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(28, 126, 214, 0.4);
-    }
-
+    /* Status Badge */
     .status-badge {
-        display: inline-block;
-        padding: 6px 16px;
+        padding: 10px 20px;
         border-radius: 20px;
-        font-weight: 600;
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        border: 2px solid;
+        transition: all 0.2s ease;
     }
 
+    .status-badge:hover {
+        transform: scale(1.05);
+    }
+
+    .status-ontime,
     .status-hadir {
-        background: #d3f9d8;
-        color: #2b8a3e;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border-color: #6ee7b7;
     }
 
+    .status-late,
     .status-terlambat {
-        background: #ffe3e3;
-        color: #c92a2a;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        border-color: #fcd34d;
     }
 
+    .status-early,
     .status-belum {
-        background: #e7f5ff;
-        color: #1864ab;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e3a8a;
+        border-color: #93c5fd;
     }
 
-    /* tambahan untuk mode baru */
-    .status-early {
-        background: #e7f5ff;
-        color: #1c7ed6;
-    }
-
-    .status-ontime {
-        background: #d3f9d8;
-        color: #2f9e44;
-    }
-
-    .status-late {
-        background: #ffe3e3;
-        color: #c92a2a;
-    }
-
+    /* Calendar Box */
     .calendar-box {
-        background: linear-gradient(135deg, #40c057 0%, #2b8a3e 100%);
-        padding: 20px;
-        border-radius: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px;
+        border-radius: 20px;
         text-align: center;
         color: white;
-        box-shadow: 0 8px 24px rgba(64, 192, 87, 0.3);
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+        border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
     .calendar-day {
-        font-size: 48px;
+        font-size: 64px;
         font-weight: 900;
         line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .calendar-weekday {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 4px;
     }
 
     .calendar-info {
         font-size: 14px;
-        margin-top: 8px;
-        opacity: 0.95;
+        opacity: 0.9;
+        font-weight: 600;
+    }
+
+    .calendar-status {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid rgba(255, 255, 255, 0.3);
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    /* Table Styling */
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 2px solid #f1f5f9;
+    }
+
+    .table-manual {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-manual thead th {
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        padding: 16px 20px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 800;
+        color: #4338ca;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-bottom: 2px solid #667eea;
+    }
+
+    .table-manual thead th:first-child {
+        border-top-left-radius: 14px;
+    }
+
+    .table-manual thead th:last-child {
+        border-top-right-radius: 14px;
+    }
+
+    .table-manual tbody tr {
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .table-manual tbody tr::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, transparent 100%);
+        transition: width 0.3s ease;
+        pointer-events: none;
+    }
+
+    .table-manual tbody tr:hover {
+        background: rgba(224, 231, 255, 0.3);
+        transform: translateX(4px);
+    }
+
+    .table-manual tbody tr:hover::after {
+        width: 100%;
+    }
+
+    .table-manual tbody td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #1e293b;
+        font-weight: 600;
+        border-bottom: 1px solid #f1f5f9;
+        background: white;
+    }
+
+    .table-manual tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-manual tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 14px;
+    }
+
+    .table-manual tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 14px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 56px 24px;
+        color: #94a3b8;
+    }
+
+    .empty-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .empty-text {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* Button Container */
+    .btn-container {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .manual-card {
+            padding: 24px;
+        }
+
+        .profile-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 22px;
+        }
+
+        .calendar-day {
+            font-size: 48px;
+        }
     }
 </style>
 
-<!-- Nature Background -->
-<div class="nature-background">
-    <div class="sun"></div>
-    <div class="cloud cloud1"></div>
-    <div class="cloud cloud2"></div>
-    <div class="bird bird1"></div>
-    <div class="bird bird2"></div>
-    <div class="mountain-far"></div>
-    <div class="mountain-near"></div>
-    <div class="ground"></div>
-</div>
-
 <!-- Dashboard Content -->
-<div class="dashboard-content page-fade">
-    <div class="max-w-5xl mx-auto">
+<div class="dashboard-content">
+    <div class="max-w-7xl mx-auto">
 
         <!-- Header Card -->
-        <div class="dashboard-card glass-card">
+        <div class="manual-card">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-1">
-                        Hi, {{ session('siswa_nama') }}!
+                    <h2 class="section-title">
+                        👋 Hi, {{ session('siswa_nama') }}!
                     </h2>
-                    <p class="text-sm text-gray-600">
-                        Selamat datang di Dashboard Sistem Absensi
+                    <p class="section-subtitle">
+                        Selamat datang di Dashboard Sistem Absensi Modern
                     </p>
                 </div>
 
-                <div class="flex gap-2">
-
+                <div class="btn-container">
                     <a href="{{ route('profile') }}" class="btn-primary">
                         ✏️ Edit Profil
                     </a>
@@ -392,94 +454,99 @@
             </div>
         </div>
 
-        <!-- Status & Calendar Card -->
-        <div class="dashboard-card">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <!-- Left: Profile & Status -->
-                <div class="flex items-center gap-4">
+        <!-- Status & Calendar Grid -->
+        <div class="stats-grid">
+            
+            <!-- Profile & Status Card -->
+            <div class="stat-card purple">
+                <div class="profile-section" style="border: none; padding: 0; margin: 0;">
                     <img src="{{ $foto }}" class="profile-pic" alt="Foto Profil">
+                    
+                    <div class="profile-info">
+                        <h3>{{ session('siswa_nama') }}</h3>
+                        <div class="stat-label" style="margin-bottom: 12px;">Status Absensi Hari Ini</div>
+                        
+                        @if($status_code === 'late')
+                        <span class="status-badge status-late">🔴 {{ $status_label }}</span>
+                        @elseif($status_code === 'early')
+                        <span class="status-badge status-early">🌅 {{ $status_label }}</span>
+                        @elseif($status_code === 'good' || $status_code === 'ontime')
+                        <span class="status-badge status-ontime">✅ {{ $status_label }}</span>
+                        @else
+                        <span class="status-badge status-belum">⏳ {{ $status_label }}</span>
+                        @endif
 
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-800 mb-2">Status Absensi Hari Ini</h3>
-
-                        <div class="mb-2">
-                            @if($status_code === 'late')
-                            <span class="status-badge status-late">🔴 {{ $status_label }}</span>
-                            @elseif($status_code === 'early')
-                            <span class="status-badge status-early">🌅 {{ $status_label }}</span>
-                            @elseif($status_code === 'good' || $status_code === 'ontime')
-                            <span class="status-badge status-ontime">✅ {{ $status_label }}</span>
-                            @else
-                            <span class="status-badge status-belum">⏳ {{ $status_label }}</span>
-                            @endif
+                        <div style="margin-top: 16px;">
+                            <p class="stat-value">
+                                <strong>⏰ Waktu:</strong>
+                                {{ $jam_absen !== '-' ? \Carbon\Carbon::parse($jam_absen)->format('H:i:s') . ' WIB' : '-' }}
+                            </p>
+                            <p class="stat-value">
+                                <strong>📊 Selisih:</strong> {{ $selisihMenit }} menit
+                            </p>
                         </div>
-
-                        <p class="text-sm text-gray-600">
-                            <strong>Waktu:</strong>
-                            {{ $jam_absen !== '-' ? \Carbon\Carbon::parse($jam_absen)->format('H:i:s') . ' WIB' : '-' }}
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            <strong>Selisih:</strong> {{ $selisihMenit }} menit
-                        </p>
                     </div>
                 </div>
+                <div class="stat-icon">👤</div>
+            </div>
 
-                <!-- Right: Calendar -->
-                <div class="flex items-center justify-center">
-                    <div class="calendar-box w-full max-w-xs">
-                        <div class="calendar-day" id="day"></div>
-                        <div class="text-lg font-semibold" id="weekday"></div>
-                        <div class="calendar-info" id="month-year"></div>
+            <!-- Calendar Card -->
+            <div class="stat-card green" style="padding: 0; overflow: hidden;">
+                <div class="calendar-box" style="border-radius: 18px; height: 100%;">
+                    <div class="calendar-day" id="day"></div>
+                    <div class="calendar-weekday" id="weekday"></div>
+                    <div class="calendar-info" id="month-year"></div>
 
-                        <div class="mt-4 pt-4 border-t border-white/30">
-                            @if($absenHariIni)
-                            <div class="font-bold">✔ Sudah Absen Hari Ini</div>
-                            @else
-                            <div class="font-semibold opacity-90">Belum Absen</div>
-                            @endif
-                        </div>
+                    <div class="calendar-status">
+                        @if($absenHariIni)
+                        ✔️ Sudah Absen Hari Ini
+                        @else
+                        ⏳ Belum Absen Hari Ini
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Riwayat Absensi Card -->
-        <div class="dashboard-card">
-            <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+        <div class="manual-card">
+            <h3 class="section-title">
                 📚 Riwayat Absensi Terbaru
             </h3>
 
-            <div class="overflow-x-auto rounded-lg border border-gray-200">
-                <table class="w-full">
+            <div class="table-wrapper">
+                <table class="table-manual">
                     <thead>
-                        <tr class="bg-gradient-to-r from-green-600 to-green-700 text-blod">
-                            <th class="p-3 text-left font-semibold">Tanggal</th>
-                            <th class="p-3 text-left font-semibold">Status</th>
-                            <th class="p-3 text-left font-semibold">Metode</th>
-                            <th class="p-3 text-left font-semibold">IP Address</th>
+                        <tr>
+                            <th>📅 Tanggal</th>
+                            <th>✅ Status</th>
+                            <th>🔧 Metode</th>
+                            <th>🌐 IP Address</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white">
+                    <tbody>
                         @forelse($riwayat as $item)
-                        <tr class="border-b border-gray-200 hover:bg-green-50 transition-colors">
-                            <td class="p-3 text-gray-700">{{ $item->tanggal }}</td>
-                            <td class="p-3">
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700;">{{ $item->tanggal }}</td>
+                            <td>
                                 @if($item->status == 'hadir')
-                                <span class="text-green-600 font-semibold">✅ Hadir</span>
+                                <span class="status-badge status-hadir">Hadir</span>
                                 @elseif($item->status == 'terlambat')
-                                <span class="text-yellow-600 font-semibold">⚠️ Terlambat</span>
+                                <span class="status-badge status-terlambat">Terlambat</span>
                                 @else
-                                <span class="text-red-600 font-semibold">❌ Alpha</span>
+                                <span class="status-badge status-alpha" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #991b1b; border-color: #fca5a5;">Alpha</span>
                                 @endif
                             </td>
-                            <td class="p-3 text-gray-700 font-medium">{{ strtoupper($item->metode) }}</td>
-                            <td class="p-3 text-gray-600 text-sm">{{ $item->ip_address }}</td>
+                            <td style="text-transform: uppercase;">{{ $item->metode }}</td>
+                            <td style="font-family: monospace; font-size: 13px; color: #64748b;">{{ $item->ip_address }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center p-8 text-gray-500 italic">
-                                Belum ada riwayat absensi.
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📭</div>
+                                    <div class="empty-text">Belum ada riwayat absensi</div>
+                                </div>
                             </td>
                         </tr>
                         @endforelse
