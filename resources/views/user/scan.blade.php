@@ -487,11 +487,7 @@ const statusEl = document.getElementById('status');
 
 function updateStatus(text, isProcessing = false) {
     statusEl.innerHTML = text;
-    if (isProcessing) {
-        statusEl.classList.add('status-processing');
-    } else {
-        statusEl.classList.remove('status-processing');
-    }
+    statusEl.classList.toggle('status-processing', isProcessing);
 }
 
 function startScanner() {
@@ -504,10 +500,8 @@ function startScanner() {
         onScanSuccess
     ).then(() => {
         updateStatus('📷 Kamera aktif, arahkan ke QR Code');
-    }).catch((err) => {
-        console.error(err);
+    }).catch(() => {
         updateStatus('⚠️ Kamera tidak tersedia atau tidak diizinkan');
-        // Show fallback button if camera fails
         document.getElementById('btnFallback').style.display = 'inline-block';
     });
 }
@@ -527,33 +521,24 @@ function postCode(kode) {
             "Accept": "application/json",
             "X-CSRF-TOKEN": "{{ csrf_token() }}"
         },
-        body: JSON.stringify({ kode })
+        body: JSON.stringify({
+            kode: kode,
+            device_id: localStorage.getItem("device_id")
+        })
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'success') {
+        if (data.status === 'success' || data.status === 'info') {
             Swal.fire({
-                icon: 'success',
-                title: '✅ Berhasil!',
+                icon: data.status === 'success' ? 'success' : 'info',
+                title: 'Informasi',
                 text: data.message,
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
             }).then(() => {
                 window.location.href = "{{ route('user.dashboard') }}";
             });
-        }
-        else if (data.status === 'info') {
-            Swal.fire({
-                icon: 'info',
-                title: 'ℹ️ Informasi',
-                text: data.message,
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            }).then(() => {
-                window.location.href = "{{ route('user.dashboard') }}";
-            });
-        }
-        else {
+        } else {
             Swal.fire({
                 icon: 'error',
                 title: '❌ Gagal',
@@ -566,39 +551,28 @@ function postCode(kode) {
             });
         }
     })
-    .catch((error) => {
-        console.error(error);
-        Swal.fire({
-            icon: 'error',
-            title: '❌ Error',
-            text: 'Gagal terhubung ke server. Silakan coba lagi.',
-            confirmButtonText: 'Coba Lagi',
-            allowOutsideClick: false
-        }).then(() => {
-            updateStatus('🔍 Menunggu pemindaian...');
-            startScanner();
-        });
+    .catch(() => {
+        Swal.fire('❌ Error', 'Gagal terhubung ke server', 'error')
+            .then(() => startScanner());
     });
 }
 
-// Fallback button handler
+// Fallback upload
 document.getElementById('btnFallback').addEventListener('click', () => {
     document.getElementById('filePicker').click();
 });
 
 document.getElementById('filePicker').addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
-        updateStatus('<span class="loading-spinner"></span>📤 Memproses gambar...', true);
-        html5QrCode.scanFile(file, true)
-            .then(decodedText => {
-                postCode(decodedText);
-            })
-            .catch(() => {
-                Swal.fire('❌ Gagal', 'QR Code tidak terdeteksi pada gambar', 'error');
-                updateStatus('🔍 Menunggu pemindaian...');
-            });
-    }
+    if (!file) return;
+
+    updateStatus('<span class="loading-spinner"></span>📤 Memproses gambar...', true);
+    html5QrCode.scanFile(file, true)
+        .then(decodedText => postCode(decodedText))
+        .catch(() => {
+            Swal.fire('❌ Gagal', 'QR tidak terdeteksi', 'error');
+            updateStatus('🔍 Menunggu pemindaian...');
+        });
 });
 
 window.addEventListener('load', startScanner);

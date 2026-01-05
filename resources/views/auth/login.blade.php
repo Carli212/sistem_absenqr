@@ -180,6 +180,7 @@
         justify-content: space-between;
     }
 
+    /* Individual Eye */
     .bear-eye {
         width: 45px;
         height: 50px;
@@ -188,93 +189,156 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
     }
 
+    /* Eyelid for blinking */
+    .bear-eyelid {
+        position: absolute;
+        top: -50px;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        border-radius: 50% 50% 45% 45%;
+        transition: top 0.15s ease;
+        z-index: 2;
+    }
+
+    /* Blinking animation */
+    .bear-eye.blinking .bear-eyelid {
+        top: 0;
+    }
+
+    /* Bear Pupil */
     .bear-pupil {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         background: #1e293b;
         border-radius: 50%;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        transition: all 0.1s ease;
+        transition: all 0.15s ease;
         box-shadow: 
             0 0 0 3px #4338ca,
             inset -3px -3px 5px rgba(0, 0, 0, 0.3);
+        z-index: 1;
     }
 
     .bear-pupil::after {
         content: '';
-        width: 6px;
-        height: 6px;
+        width: 7px;
+        height: 7px;
         background: white;
         border-radius: 50%;
         position: absolute;
         top: 3px;
-        left: 3px;
+        left: 4px;
+        animation: sparkle 3s ease-in-out infinite;
     }
 
-    /* Closed Eyes State */
-    .bear-eyes.closed .bear-eye {
-        height: 8px;
-        background: #1e293b;
-        border-radius: 50%;
-        transition: all 0.3s ease;
+    @keyframes sparkle {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.9); }
     }
 
-    .bear-eyes.closed .bear-pupil {
-        opacity: 0;
-    }
-
-    /* Bear Hands covering eyes */
+    /* Bear Hands - NATURAL & CUTE */
     .bear-hand {
         width: 50px;
-        height: 60px;
+        height: 50px;
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 50% 50% 45% 45%;
+        border-radius: 50%;
         position: absolute;
         top: 20px;
         opacity: 0;
-        transform: scale(0);
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: scale(0) translateY(30px);
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        z-index: 10;
     }
 
     .bear-hand.left {
-        left: -20px;
+        left: -5px;
         rotate: -15deg;
     }
 
     .bear-hand.right {
-        right: -20px;
+        right: -5px;
         rotate: 15deg;
     }
 
     .bear-hand.show {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 
-    /* Hand Fingers */
-    .hand-finger {
-        width: 15px;
-        height: 20px;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 50% 50% 40% 40%;
+    /* Hand Palm Center */
+    .hand-pad {
+        width: 28px;
+        height: 28px;
+        background: #fde68a;
+        border-radius: 50%;
         position: absolute;
-        bottom: -8px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
-    .hand-finger:nth-child(1) { left: 5px; height: 18px; }
-    .hand-finger:nth-child(2) { left: 18px; height: 22px; }
-    .hand-finger:nth-child(3) { left: 31px; height: 18px; }
+    /* Hand Fingers - NATURAL LOOK */
+    .hand-finger {
+        width: 12px;
+        height: 18px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        border-radius: 40% 40% 50% 50%;
+        position: absolute;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Finger positioning for natural hand look */
+    .bear-hand.left .hand-finger:nth-child(2) { 
+        top: -8px; 
+        left: 2px;
+        height: 16px;
+        rotate: -25deg;
+    }
+    .bear-hand.left .hand-finger:nth-child(3) { 
+        top: -10px; 
+        left: 13px;
+        height: 19px;
+        rotate: -10deg;
+    }
+    .bear-hand.left .hand-finger:nth-child(4) { 
+        top: -9px; 
+        right: 12px;
+        height: 17px;
+        rotate: 5deg;
+    }
+
+    .bear-hand.right .hand-finger:nth-child(2) { 
+        top: -8px; 
+        right: 2px;
+        height: 16px;
+        rotate: 25deg;
+    }
+    .bear-hand.right .hand-finger:nth-child(3) { 
+        top: -10px; 
+        right: 13px;
+        height: 19px;
+        rotate: 10deg;
+    }
+    .bear-hand.right .hand-finger:nth-child(4) { 
+        top: -9px; 
+        left: 12px;
+        height: 17px;
+        rotate: -5deg;
+    }
 
     /* Bear Nose */
     .bear-nose {
-        width: 35px;
-        height: 28px;
+        width: 38px;
+        height: 30px;
         background: #1e293b;
         border-radius: 50% 50% 45% 45%;
         position: absolute;
@@ -282,57 +346,142 @@
         left: 50%;
         transform: translateX(-50%);
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        animation: noseWiggle 3s ease-in-out infinite;
+    }
+
+    @keyframes noseWiggle {
+        0%, 100% { transform: translateX(-50%) scale(1); }
+        50% { transform: translateX(-50%) scale(1.05); }
     }
 
     .bear-nose::before {
         content: '';
-        width: 12px;
-        height: 8px;
-        background: white;
+        width: 14px;
+        height: 9px;
+        background: rgba(255, 255, 255, 0.6);
         border-radius: 50%;
         position: absolute;
-        top: 4px;
-        left: 6px;
-        opacity: 0.6;
+        top: 5px;
+        left: 7px;
     }
 
-    /* Bear Mouth */
+    /* Bear Mouth - CUTE & SIMPLE SMILE */
     .bear-mouth {
-        width: 60px;
-        height: 30px;
+        width: 50px;
+        height: 25px;
+        border: 0;
+        position: absolute;
+        top: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Simple curve line for smile */
+    .bear-mouth::before {
+        content: '';
+        width: 50px;
+        height: 25px;
         border: 4px solid #1e293b;
         border-top: none;
         border-radius: 0 0 50% 50%;
         position: absolute;
-        top: 85px;
-        left: 50%;
-        transform: translateX(-50%);
+        transition: all 0.4s ease;
+    }
+
+    /* Happy smile - wider and more curved */
+    .bear-mouth.smile::before {
+        width: 70px;
+        height: 35px;
+        border-width: 4px;
+        animation: happySmileBounce 0.5s ease;
+    }
+
+    @keyframes happySmileBounce {
+        0% { 
+            transform: scale(1) translateY(0); 
+        }
+        50% { 
+            transform: scale(1.1) translateY(-2px); 
+        }
+        100% { 
+            transform: scale(1) translateY(0); 
+        }
+    }
+
+    /* Cute simple tongue - only shows when smiling */
+    .bear-tongue {
+        width: 20px;
+        height: 12px;
+        background: #f472b6;
+        border-radius: 0 0 50% 50%;
+        position: absolute;
+        bottom: -2px;
+        transform: translateY(10px) scale(0.5);
+        opacity: 0;
         transition: all 0.3s ease;
     }
 
-    .bear-mouth.smile {
-        animation: smile 0.5s ease;
+    .bear-mouth.smile .bear-tongue {
+        transform: translateY(0) scale(1);
+        opacity: 1;
     }
 
-    @keyframes smile {
-        0%, 100% { transform: translateX(-50%) scale(1); }
-        50% { transform: translateX(-50%) scale(1.2, 0.8); }
-    }
-
-    /* Bear Cheeks */
-    .bear-cheek {
-        width: 45px;
-        height: 35px;
-        background: rgba(251, 146, 60, 0.3);
+    /* Smile Dimples */
+    .bear-dimple {
+        width: 8px;
+        height: 8px;
+        background: rgba(0, 0, 0, 0.15);
         border-radius: 50%;
         position: absolute;
-        top: 70px;
+        top: 88px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
-    .bear-cheek.left { left: -10px; }
-    .bear-cheek.right { right: -10px; }
+    .bear-dimple.left { left: 15px; }
+    .bear-dimple.right { right: 15px; }
 
-    /* Bear Body Bottom */
+    .bear-mouth.smile ~ .bear-dimple {
+        opacity: 1;
+    }
+
+    /* Bear Cheeks - ENHANCED */
+    .bear-cheek {
+        width: 50px;
+        height: 38px;
+        background: rgba(251, 146, 60, 0.35);
+        border-radius: 50%;
+        position: absolute;
+        top: 68px;
+        transition: all 0.3s ease;
+        animation: cheekGlow 3s ease-in-out infinite;
+    }
+
+    .bear-cheek.left { left: -12px; }
+    .bear-cheek.right { right: -12px; }
+
+    @keyframes cheekGlow {
+        0%, 100% { 
+            background: rgba(251, 146, 60, 0.35);
+            transform: scale(1);
+        }
+        50% { 
+            background: rgba(251, 146, 60, 0.5);
+            transform: scale(1.08);
+        }
+    }
+
+    /* Enhanced cheeks when happy */
+    .bear-mouth.smile ~ .bear-cheek {
+        background: rgba(251, 146, 60, 0.6);
+        transform: scale(1.15);
+    }
+
+    /* Bear Belly */
     .bear-belly {
         width: 120px;
         height: 100px;
@@ -342,17 +491,41 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
+        animation: bellyBreathe 3s ease-in-out infinite;
+    }
+
+    @keyframes bellyBreathe {
+        0%, 100% { transform: translateX(-50%) scale(1, 1); }
+        50% { transform: translateX(-50%) scale(1.02, 0.98); }
+    }
+
+    /* Happy Jump Animation */
+    .character-container.happy {
+        animation: happyJump 0.6s ease;
+    }
+
+    @keyframes happyJump {
+        0%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-25px) scale(1.05); }
+        50% { transform: translateY(-30px) scale(1.05); }
+        70% { transform: translateY(-10px) scale(0.98); }
     }
 
     /* Nodding Animation */
     .character-bear.nodding {
-        animation: nodding 0.6s ease;
+        animation: happyNod 0.6s ease;
     }
 
-    @keyframes nodding {
-        0%, 100% { transform: translate(-50%, -50%) rotateX(0deg); }
-        25% { transform: translate(-50%, -48%) rotateX(10deg); }
-        75% { transform: translate(-50%, -52%) rotateX(-10deg); }
+    @keyframes happyNod {
+        0%, 100% { 
+            transform: translate(-50%, -50%) rotateX(0deg); 
+        }
+        25% { 
+            transform: translate(-50%, -48%) rotateX(12deg) scale(1.02); 
+        }
+        75% { 
+            transform: translate(-50%, -52%) rotateX(-8deg) scale(1.02); 
+        }
     }
 
     /* Illustration Text */
@@ -654,7 +827,7 @@
         
         <!-- LEFT SIDE - CHARACTER ILLUSTRATION -->
         <div class="login-illustration">
-            <div class="character-container">
+            <div class="character-container" id="characterContainer">
                 <!-- Bear Character -->
                 <div class="character-bear" id="bearBody">
                     <!-- Ears -->
@@ -670,23 +843,27 @@
 
                     <!-- Face -->
                     <div class="bear-face">
-                        <!-- Eyes -->
+                        <!-- Eyes with Eyelids -->
                         <div class="bear-eyes" id="bearEyes">
-                            <div class="bear-eye">
+                            <div class="bear-eye" id="leftEye">
+                                <div class="bear-eyelid"></div>
                                 <div class="bear-pupil" id="leftPupil"></div>
                             </div>
-                            <div class="bear-eye">
+                            <div class="bear-eye" id="rightEye">
+                                <div class="bear-eyelid"></div>
                                 <div class="bear-pupil" id="rightPupil"></div>
                             </div>
                         </div>
 
-                        <!-- Hands (for covering eyes) -->
+                        <!-- Hands for covering eyes -->
                         <div class="bear-hand left" id="leftHand">
+                            <div class="hand-pad"></div>
                             <div class="hand-finger"></div>
                             <div class="hand-finger"></div>
                             <div class="hand-finger"></div>
                         </div>
                         <div class="bear-hand right" id="rightHand">
+                            <div class="hand-pad"></div>
                             <div class="hand-finger"></div>
                             <div class="hand-finger"></div>
                             <div class="hand-finger"></div>
@@ -699,8 +876,14 @@
                         <!-- Nose -->
                         <div class="bear-nose"></div>
 
-                        <!-- Mouth -->
-                        <div class="bear-mouth" id="bearMouth"></div>
+                        <!-- Simple cute mouth -->
+                        <div class="bear-mouth" id="bearMouth">
+                            <div class="bear-tongue"></div>
+                        </div>
+
+                        <!-- Dimples -->
+                        <div class="bear-dimple left"></div>
+                        <div class="bear-dimple right"></div>
                     </div>
                 </div>
             </div>
@@ -819,21 +1002,49 @@ function createParticles() {
 }
 createParticles();
 
-// Character interactions
+// ========== CHARACTER INTERACTIONS ==========
 const leftPupil = document.getElementById('leftPupil');
 const rightPupil = document.getElementById('rightPupil');
+const leftEye = document.getElementById('leftEye');
+const rightEye = document.getElementById('rightEye');
 const bearEyes = document.getElementById('bearEyes');
 const leftHand = document.getElementById('leftHand');
 const rightHand = document.getElementById('rightHand');
 const bearBody = document.getElementById('bearBody');
 const bearMouth = document.getElementById('bearMouth');
+const characterContainer = document.getElementById('characterContainer');
 const namaInput = document.getElementById('namaInput');
 const passwordInput = document.getElementById('passwordInput');
 const submitBtn = document.getElementById('submitBtn');
 
-// Eyes follow mouse
+let isPasswordFocused = false;
+let blinkInterval;
+
+// ========== AUTO BLINKING ==========
+function startBlinking() {
+    blinkInterval = setInterval(() => {
+        if (!isPasswordFocused) {
+            blink();
+        }
+    }, Math.random() * 3000 + 2000); // Random blink every 2-5 seconds
+}
+
+function blink() {
+    leftEye.classList.add('blinking');
+    rightEye.classList.add('blinking');
+    
+    setTimeout(() => {
+        leftEye.classList.remove('blinking');
+        rightEye.classList.remove('blinking');
+    }, 150);
+}
+
+// Start automatic blinking
+startBlinking();
+
+// ========== EYES FOLLOW MOUSE ==========
 document.addEventListener('mousemove', (e) => {
-    if (!passwordInput.matches(':focus')) {
+    if (!isPasswordFocused) {
         const pupils = [leftPupil, rightPupil];
         pupils.forEach((pupil) => {
             const eye = pupil.parentElement;
@@ -842,7 +1053,7 @@ document.addEventListener('mousemove', (e) => {
             const eyeCenterY = eyeRect.top + eyeRect.height / 2;
             
             const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
-            const distance = Math.min(12, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 30);
+            const distance = Math.min(10, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 30);
             
             const pupilX = Math.cos(angle) * distance;
             const pupilY = Math.sin(angle) * distance;
@@ -852,37 +1063,103 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-// Nodding when typing name
+// ========== HAPPY NOD + SMILE WHEN TYPING NAME ==========
+let typingTimeout;
 namaInput.addEventListener('input', () => {
+    // Clear previous timeout
+    clearTimeout(typingTimeout);
+    
+    // Add happy animations
     bearBody.classList.add('nodding');
     bearMouth.classList.add('smile');
-    setTimeout(() => {
+    characterContainer.classList.add('happy');
+    
+    // Blink happily
+    blink();
+    
+    // Remove animations after delay
+    typingTimeout = setTimeout(() => {
         bearBody.classList.remove('nodding');
-        bearMouth.classList.remove('smile');
+        characterContainer.classList.remove('happy');
     }, 600);
+    
+    setTimeout(() => {
+        bearMouth.classList.remove('smile');
+    }, 2000);
 });
 
-// Cover eyes when typing password
+// Keep smile while typing
+namaInput.addEventListener('focus', () => {
+    bearMouth.classList.add('smile');
+    setTimeout(blink, 300);
+});
+
+namaInput.addEventListener('blur', () => {
+    setTimeout(() => {
+        bearMouth.classList.remove('smile');
+    }, 500);
+});
+
+// ========== COVER EYES WITH HANDS WHEN PASSWORD FOCUSED ==========
 passwordInput.addEventListener('focus', () => {
-    bearEyes.classList.add('closed');
+    isPasswordFocused = true;
+    
+    // Hide pupils first
+    leftPupil.style.opacity = '0';
+    rightPupil.style.opacity = '0';
+    
+    // Show hands covering eyes
     setTimeout(() => {
         leftHand.classList.add('show');
         rightHand.classList.add('show');
-    }, 200);
+    }, 150);
+    
+    // Remove smile
+    bearMouth.classList.remove('smile');
 });
 
 passwordInput.addEventListener('blur', () => {
+    isPasswordFocused = false;
+    
+    // Remove hands
     leftHand.classList.remove('show');
     rightHand.classList.remove('show');
+    
+    // Show pupils again
     setTimeout(() => {
-        bearEyes.classList.remove('closed');
-    }, 300);
+        leftPupil.style.opacity = '1';
+        rightPupil.style.opacity = '1';
+        
+        // Happy blink after revealing
+        setTimeout(blink, 200);
+    }, 400);
 });
 
-// Excited when clicking submit
+// ========== EXCITED WHEN CLICKING SUBMIT ==========
 submitBtn.addEventListener('click', (e) => {
     bearBody.classList.add('excited');
     bearMouth.classList.add('smile');
+    characterContainer.classList.add('happy');
+    
+    // Multiple happy blinks
+    setTimeout(blink, 100);
+    setTimeout(blink, 400);
+});
+
+// ========== SMILE ON FORM HOVER ==========
+const loginForm = document.getElementById('loginForm');
+loginForm.addEventListener('mouseenter', () => {
+    if (!isPasswordFocused) {
+        bearMouth.classList.add('smile');
+    }
+});
+
+loginForm.addEventListener('mouseleave', () => {
+    if (!namaInput.matches(':focus')) {
+        setTimeout(() => {
+            bearMouth.classList.remove('smile');
+        }, 500);
+    }
 });
 </script>
 

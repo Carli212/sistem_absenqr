@@ -77,4 +77,5 @@ class ScanQrController extends Controller
             'message' => 'Absensi berhasil'
         ]);
     }
+
 }
