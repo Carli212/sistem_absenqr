@@ -379,6 +379,221 @@
         margin-right: 12px;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
+
+    /* ===== PAGINATION STYLING ===== */
+    .pagination-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        margin-top: 32px;
+        padding-top: 28px;
+        border-top: 2px solid #e0e7ff;
+    }
+
+    /* Info Text Styling */
+    .pagination-info {
+        text-align: center;
+        font-size: 15px;
+        font-weight: 600;
+        color: #64748b;
+        letter-spacing: 0.3px;
+        padding: 16px 24px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+    }
+
+    .pagination-info strong {
+        color: #667eea;
+        font-weight: 900;
+        font-size: 16px;
+    }
+
+    /* Pagination Container */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex-wrap: wrap;
+    }
+
+    /* Pagination Items */
+    .pagination li {
+        display: inline-block;
+    }
+
+    /* Pagination Links & Spans */
+    .pagination a,
+    .pagination span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 46px;
+        height: 46px;
+        padding: 0 18px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+    }
+
+    /* Default Link Style */
+    .pagination a {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        color: #475569;
+        border-color: #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .pagination a:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+    }
+
+    /* Active Page */
+    .pagination .active span {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: #667eea;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        cursor: default;
+        position: relative;
+    }
+
+    .pagination .active span::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        background: white;
+        border-radius: 2px;
+    }
+
+    /* Disabled State */
+    .pagination .disabled span {
+        background: #f1f5f9;
+        color: #cbd5e1;
+        border-color: #e2e8f0;
+        cursor: not-allowed;
+        opacity: 0.6;
+        box-shadow: none;
+    }
+
+    /* Previous & Next Buttons */
+    .pagination li:first-child a,
+    .pagination li:last-child a {
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 13px;
+        padding: 0 24px;
+        background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+        border-width: 2px;
+    }
+
+    .pagination li:first-child a:hover,
+    .pagination li:last-child a:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transform: translateY(-3px) scale(1.05);
+    }
+
+    /* Dots/Ellipsis */
+    .pagination .disabled span {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        cursor: default;
+        min-width: auto;
+        padding: 0 10px;
+        font-size: 18px;
+        font-weight: 900;
+        box-shadow: none;
+    }
+
+    /* Add animation to pagination */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .pagination-wrapper {
+        animation: slideUp 0.5s ease-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .pagination {
+            gap: 8px;
+        }
+        
+        .pagination a,
+        .pagination span {
+            min-width: 40px;
+            height: 40px;
+            font-size: 14px;
+            padding: 0 14px;
+        }
+        
+        .pagination li:first-child a,
+        .pagination li:last-child a {
+            padding: 0 18px;
+            font-size: 12px;
+        }
+        
+        /* Hide middle page numbers on mobile */
+        .pagination li:not(:first-child):not(:last-child):not(.active):not(.disabled) {
+            display: none;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            padding: 14px 18px;
+        }
+
+        .pagination-info strong {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .pagination-wrapper {
+            gap: 20px;
+        }
+        
+        .pagination-info {
+            font-size: 12px;
+            padding: 12px 16px;
+        }
+
+        .pagination-info strong {
+            font-size: 13px;
+        }
+
+        .pagination a,
+        .pagination span {
+            min-width: 36px;
+            height: 36px;
+            font-size: 13px;
+        }
+    }
 </style>
 
 <div class="space-y-6 max-w-7xl mx-auto">
@@ -536,7 +751,19 @@
 
         {{-- Pagination --}}
         @if($rekap->hasPages())
-        <div style="margin-top: 24px;">
+        <div class="pagination-wrapper">
+            {{-- Pagination Info --}}
+            <div class="pagination-info">
+                Menampilkan 
+                <strong>{{ $rekap->firstItem() }}</strong> 
+                sampai 
+                <strong>{{ $rekap->lastItem() }}</strong> 
+                dari 
+                <strong>{{ $rekap->total() }}</strong> 
+                hasil
+            </div>
+            
+            {{-- Pagination Links --}}
             {{ $rekap->links() }}
         </div>
         @endif

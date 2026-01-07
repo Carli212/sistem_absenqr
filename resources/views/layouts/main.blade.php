@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>@yield('title')</title>
+
+{{-- FAVICON / APP ICON --}}
+<link rel="icon" href="{{ asset('icon/favicon.png') }}" type="image/png">
+<link rel="icon" sizes="32x32" href="{{ asset('icon/logo-32.png') }}">
+<link rel="icon" sizes="64x64" href="{{ asset('icon/logo-64.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('icon/logo-180.png') }}">
+<link rel="manifest" href="{{ asset('build/manifest.json') }}">
 
     {{-- Tailwind via Vite --}}
     @vite('resources/css/app.css')
@@ -18,16 +25,15 @@
 
 <body class="bg-gray-100">
 
-    <main class="min-h-screen">
-        @yield('content')
-    </main>
+<main class="min-h-screen">
+    @yield('content')
+</main>
 
-    {{-- SweetAlert --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- SweetAlert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    {{-- Lottie --}}
-    <script src="https://unpkg.com/lottie-web@5.7.4/build/player/lottie.min.js"></script>
-
+{{-- Lottie --}}
+<script src="https://unpkg.com/lottie-web@5.7.4/build/player/lottie.min.js"></script>
 
 {{-- =========================================================
     NOTIFIKASI ABSENSI (early, ontime, late)
@@ -38,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const notif = @json(session('notif_absen'));
 
-    // ===== LATE =====
     if (notif.type === "late") {
         Swal.fire({
             title: "Kamu Terlambat ⚠️",
@@ -54,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // ===== EARLY =====
     if (notif.type === "early") {
         Swal.fire({
             title: "Datang Paling Awal 🌅",
@@ -77,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // ===== ONTIME =====
     if (notif.type === "ontime") {
         Swal.fire({
             title: "Hadir Tepat Waktu 🔥",
@@ -97,84 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
         });
-        return;
     }
-
 });
 </script>
 @endif
-
-
-
-{{-- =========================================================
-    MODE SAVAGE (HP temen, QR palsu, telat parah)
-========================================================= --}}
-@if(session('savage_mode'))
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    const savage = @json(session('savage_mode'));
-
-    let title = "";
-    let htmlContent = "";
-    let timer = 3000;
-
-    // DEVICE MISMATCH
-    if (savage.type === "device_mismatch") {
-        title = "Ketahuan Pake HP Temen 😭📵";
-        htmlContent = `
-            <img src="https://media.tenor.com/_u8AqkNNZjwAAAAi/frog-angry.gif"
-                 style="width:220px;border-radius:12px;margin-bottom:10px;">
-            <p class='text-sm mt-2'>Akun: <b>${savage.name}</b></p>
-            <p class="text-red-600 font-bold mt-1">Jangan nakal ya bro! 😂</p>
-        `;
-    }
-
-    // QR INVALID
-    if (savage.type === "qr_invalid") {
-        title = "QR Palsu!? 😳";
-        htmlContent = `
-            <img src="https://media.tenor.com/VcWnZfaN3WcAAAAi/frog-shocked.gif"
-                 style="width:200px;border-radius:12px;margin-bottom:10px;">
-            <p class="mt-2">QR Code tidak valid</p>
-            <p class="text-yellow-600 font-bold">Jangan nge-prank sistem dong 🐸</p>
-        `;
-    }
-
-    // QR EXPIRED
-    if (savage.type === "qr_expired") {
-        title = "QR Udah Expired 😭";
-        htmlContent = `
-            <img src="https://media.tenor.com/3mFnaqgZrRQAAAAi/frog-stare.gif"
-                 style="width:200px;border-radius:12px;margin-bottom:10px;">
-            <p class="mt-2">Ayo buruan scan yg baru!</p>
-        `;
-    }
-
-    // TELAT BANGEEEET
-    if (savage.type === "late_extreme") {
-        title = "TELAAAT BANGEEET 😂🔥";
-        htmlContent = `
-            <img src="https://media.tenor.com/Ce1XbBJ0J2cAAAAM/frog-running.gif"
-                 style="width:230px;border-radius:12px;margin-bottom:10px;">
-            <p class="mt-2"><b>${savage.name}</b>, kamu telat banget cuy</p>
-            <p class="text-red-600 font-bold">Waktu absen: ${savage.time}</p>
-            <p>Jalanan macet? Atau bangun kesiangan? 😭</p>
-        `;
-    }
-
-    Swal.fire({
-        title,
-        html: htmlContent,
-        showConfirmButton: false,
-        timer: timer
-    });
-
-});
-</script>
-@endif
-
-
 
 {{-- =========================================================
     DEVICE ERROR (LOGIN)
@@ -182,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
 @if(session('device_error'))
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
     Swal.fire({
         title: "HP Tidak Cocok! 🐸💥",
         html: `
@@ -196,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmButtonText: "Oke, paham 😔",
         confirmButtonColor: "#d9534f",
     });
-
 });
 </script>
 @endif

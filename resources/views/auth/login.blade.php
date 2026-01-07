@@ -3,6 +3,12 @@
 
 @section('content')
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     /* Background Container */
     .login-siswa-container {
         min-height: 100vh;
@@ -84,136 +90,145 @@
         overflow: hidden;
     }
 
-    /* Character Container */
+    /* Robot Character Container */
     .character-container {
         position: relative;
         width: 280px;
-        height: 280px;
+        height: 320px;
         margin-bottom: 32px;
-        animation: characterFloat 4s ease-in-out infinite;
+        animation: robotFloat 3s ease-in-out infinite;
     }
 
-    @keyframes characterFloat {
+    @keyframes robotFloat {
         0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-15px); }
+        50% { transform: translateY(-10px); }
     }
 
-    /* Character - Bear Body */
-    .character-bear {
-        width: 200px;
-        height: 220px;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 45% 45% 40% 40%;
+    /* Robot Body */
+    .robot-body {
+        width: 180px;
+        height: 200px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 30px;
         position: absolute;
         left: 50%;
-        top: 50%;
+        top: 55%;
         transform: translate(-50%, -50%);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.2),
+            inset 0 -5px 20px rgba(0, 0, 0, 0.1);
+        border: 4px solid #cbd5e1;
     }
 
-    .character-bear.excited {
-        animation: bearExcited 0.5s ease;
-    }
-
-    @keyframes bearExcited {
-        0%, 100% { transform: translate(-50%, -50%) scale(1); }
-        25% { transform: translate(-50%, -50%) scale(1.05) rotate(-5deg); }
-        75% { transform: translate(-50%, -50%) scale(1.05) rotate(5deg); }
-    }
-
-    /* Bear Ears */
-    .bear-ear {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 50%;
-        position: absolute;
-        top: -20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .bear-ear.left {
-        left: 10px;
-        animation: earWiggle 2s ease-in-out infinite;
-    }
-
-    .bear-ear.right {
-        right: 10px;
-        animation: earWiggle 2s ease-in-out infinite 0.5s;
-    }
-
-    @keyframes earWiggle {
-        0%, 100% { transform: rotate(0deg); }
-        50% { transform: rotate(10deg); }
-    }
-
-    .bear-ear-inner {
-        width: 35px;
-        height: 35px;
-        background: #fde68a;
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* Bear Face */
-    .bear-face {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    /* Robot Head */
+    .robot-head {
         width: 160px;
         height: 140px;
+        background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        border-radius: 25px;
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        transform: translate(-50%, -50%);
+        box-shadow: 
+            0 15px 35px rgba(0, 0, 0, 0.15),
+            inset 0 2px 10px rgba(255, 255, 255, 0.8);
+        border: 4px solid #cbd5e1;
+        transition: transform 0.3s ease;
     }
 
-    /* Bear Eyes Container */
-    .bear-eyes {
+    /* Antenna */
+    .robot-antenna {
+        width: 4px;
+        height: 30px;
+        background: linear-gradient(to bottom, #94a3b8, #cbd5e1);
         position: absolute;
-        top: 30px;
+        top: -30px;
         left: 50%;
         transform: translateX(-50%);
-        width: 120px;
+        border-radius: 2px;
+    }
+
+    .robot-antenna::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+        animation: antennaBlink 2s ease-in-out infinite;
+    }
+
+    @keyframes antennaBlink {
+        0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(102, 126, 234, 0.6); }
+        50% { opacity: 0.4; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
+    }
+
+    /* Robot Face Screen */
+    .robot-face {
+        width: 130px;
+        height: 90px;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-radius: 15px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 
+            inset 0 2px 10px rgba(0, 0, 0, 0.5),
+            0 4px 15px rgba(102, 126, 234, 0.3);
+        overflow: hidden;
+    }
+
+    /* Screen Glow Effect */
+    .robot-face::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+        animation: screenGlow 3s linear infinite;
+    }
+
+    @keyframes screenGlow {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    /* Robot Eyes */
+    .robot-eyes {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
     }
 
-    /* Individual Eye */
-    .bear-eye {
-        width: 45px;
-        height: 50px;
-        background: white;
-        border-radius: 50% 50% 45% 45%;
+    .robot-eye {
+        width: 35px;
+        height: 35px;
+        background: #667eea;
+        border-radius: 50%;
         position: relative;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        transition: all 0.2s ease;
+        box-shadow: 
+            0 0 20px rgba(102, 126, 234, 0.8),
+            inset 0 2px 8px rgba(255, 255, 255, 0.3);
+        transition: all 0.15s ease;
     }
 
-    /* Eyelid for blinking */
-    .bear-eyelid {
-        position: absolute;
-        top: -50px;
-        left: 0;
-        right: 0;
-        height: 50px;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 50% 50% 45% 45%;
-        transition: top 0.15s ease;
-        z-index: 2;
-    }
-
-    /* Blinking animation */
-    .bear-eye.blinking .bear-eyelid {
-        top: 0;
-    }
-
-    /* Bear Pupil */
-    .bear-pupil {
-        width: 20px;
-        height: 20px;
+    /* Eye Pupil */
+    .robot-pupil {
+        width: 15px;
+        height: 15px;
         background: #1e293b;
         border-radius: 50%;
         position: absolute;
@@ -221,311 +236,194 @@
         left: 50%;
         transform: translate(-50%, -50%);
         transition: all 0.15s ease;
-        box-shadow: 
-            0 0 0 3px #4338ca,
-            inset -3px -3px 5px rgba(0, 0, 0, 0.3);
-        z-index: 1;
     }
 
-    .bear-pupil::after {
+    .robot-pupil::after {
         content: '';
-        width: 7px;
-        height: 7px;
+        width: 5px;
+        height: 5px;
         background: white;
         border-radius: 50%;
         position: absolute;
         top: 3px;
-        left: 4px;
-        animation: sparkle 3s ease-in-out infinite;
+        left: 3px;
     }
 
-    @keyframes sparkle {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(0.9); }
+    /* Robot Mouth */
+    .robot-mouth {
+        width: 60px;
+        height: 4px;
+        background: #667eea;
+        position: absolute;
+        bottom: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.6);
+        transition: all 0.3s ease;
     }
 
-    /* Bear Hands - NATURAL & CUTE */
-    .bear-hand {
+    /* Happy Mouth - FIXED */
+    .robot-mouth.smile {
         width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 50%;
+        height: 25px;
+        border: 4px solid #667eea;
+        background: transparent;
+        border-top: none;
+        border-radius: 0 0 25px 25px;
+        bottom: 20%;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.6);
+    }
+
+    /* Robot Arms */
+    .robot-arm {
+        width: 25px;
+        height: 100px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 12px;
         position: absolute;
-        top: 20px;
-        opacity: 0;
-        transform: scale(0) translateY(30px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border: 3px solid #cbd5e1;
         transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        z-index: 10;
     }
 
-    .bear-hand.left {
-        left: -5px;
-        rotate: -15deg;
+    .robot-arm.left {
+        left: -20px;
+        top: 50%;
+        transform: rotate(10deg);
+        transform-origin: top center;
     }
 
-    .bear-hand.right {
-        right: -5px;
-        rotate: 15deg;
+    .robot-arm.right {
+        right: -20px;
+        top: 50%;
+        transform: rotate(-10deg);
+        transform-origin: top center;
     }
 
-    .bear-hand.show {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-
-    /* Hand Palm Center */
-    .hand-pad {
-        width: 28px;
-        height: 28px;
-        background: #fde68a;
+    /* Arm Hand */
+    .robot-hand {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
         border-radius: 50%;
         position: absolute;
-        top: 50%;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border: 3px solid #64748b;
+    }
+
+    /* Waving Animation */
+    .robot-arm.wave {
+        animation: armWave 0.6s ease-in-out;
+    }
+
+    @keyframes armWave {
+        0%, 100% { transform: rotate(10deg); }
+        25% { transform: rotate(-20deg); }
+        75% { transform: rotate(20deg); }
+    }
+
+    .robot-arm.right.wave {
+        animation: armWaveRight 0.6s ease-in-out;
+    }
+
+    @keyframes armWaveRight {
+        0%, 100% { transform: rotate(-10deg); }
+        25% { transform: rotate(20deg); }
+        75% { transform: rotate(-20deg); }
+    }
+
+    /* Covering Eyes - FIXED SMOOTH */
+    .robot-arm.cover {
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .robot-arm.left.cover {
+        left: 35px;
+        top: 8%;
+        transform: rotate(-30deg) scale(0.85);
+    }
+
+    .robot-arm.right.cover {
+        right: 35px;
+        top: 8%;
+        transform: rotate(30deg) scale(0.85);
+    }
+
+    /* Robot Chest Panel */
+    .robot-chest {
+        width: 80px;
+        height: 60px;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-radius: 12px;
+        position: absolute;
+        top: 60%;
         left: 50%;
         transform: translate(-50%, -50%);
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
-    /* Hand Fingers - NATURAL LOOK */
-    .hand-finger {
-        width: 12px;
-        height: 18px;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 40% 40% 50% 50%;
-        position: absolute;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Finger positioning for natural hand look */
-    .bear-hand.left .hand-finger:nth-child(2) { 
-        top: -8px; 
-        left: 2px;
-        height: 16px;
-        rotate: -25deg;
-    }
-    .bear-hand.left .hand-finger:nth-child(3) { 
-        top: -10px; 
-        left: 13px;
-        height: 19px;
-        rotate: -10deg;
-    }
-    .bear-hand.left .hand-finger:nth-child(4) { 
-        top: -9px; 
-        right: 12px;
-        height: 17px;
-        rotate: 5deg;
-    }
-
-    .bear-hand.right .hand-finger:nth-child(2) { 
-        top: -8px; 
-        right: 2px;
-        height: 16px;
-        rotate: 25deg;
-    }
-    .bear-hand.right .hand-finger:nth-child(3) { 
-        top: -10px; 
-        right: 13px;
-        height: 19px;
-        rotate: 10deg;
-    }
-    .bear-hand.right .hand-finger:nth-child(4) { 
-        top: -9px; 
-        left: 12px;
-        height: 17px;
-        rotate: -5deg;
-    }
-
-    /* Bear Nose */
-    .bear-nose {
-        width: 38px;
-        height: 30px;
-        background: #1e293b;
-        border-radius: 50% 50% 45% 45%;
-        position: absolute;
-        top: 65px;
-        left: 50%;
-        transform: translateX(-50%);
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-        animation: noseWiggle 3s ease-in-out infinite;
-    }
-
-    @keyframes noseWiggle {
-        0%, 100% { transform: translateX(-50%) scale(1); }
-        50% { transform: translateX(-50%) scale(1.05); }
-    }
-
-    .bear-nose::before {
-        content: '';
-        width: 14px;
-        height: 9px;
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 50%;
-        position: absolute;
-        top: 5px;
-        left: 7px;
-    }
-
-    /* Bear Mouth - CUTE & SIMPLE SMILE */
-    .bear-mouth {
-        width: 50px;
-        height: 25px;
-        border: 0;
-        position: absolute;
-        top: 90px;
-        left: 50%;
-        transform: translateX(-50%);
-        transition: all 0.4s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Simple curve line for smile */
-    .bear-mouth::before {
-        content: '';
-        width: 50px;
-        height: 25px;
-        border: 4px solid #1e293b;
-        border-top: none;
-        border-radius: 0 0 50% 50%;
-        position: absolute;
-        transition: all 0.4s ease;
-    }
-
-    /* Happy smile - wider and more curved */
-    .bear-mouth.smile::before {
-        width: 70px;
-        height: 35px;
-        border-width: 4px;
-        animation: happySmileBounce 0.5s ease;
-    }
-
-    @keyframes happySmileBounce {
-        0% { 
-            transform: scale(1) translateY(0); 
-        }
-        50% { 
-            transform: scale(1.1) translateY(-2px); 
-        }
-        100% { 
-            transform: scale(1) translateY(0); 
-        }
-    }
-
-    /* Cute simple tongue - only shows when smiling */
-    .bear-tongue {
-        width: 20px;
-        height: 12px;
-        background: #f472b6;
-        border-radius: 0 0 50% 50%;
-        position: absolute;
-        bottom: -2px;
-        transform: translateY(10px) scale(0.5);
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .bear-mouth.smile .bear-tongue {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-
-    /* Smile Dimples */
-    .bear-dimple {
+    /* Chest Indicators */
+    .chest-indicator {
         width: 8px;
         height: 8px;
-        background: rgba(0, 0, 0, 0.15);
+        background: #10b981;
         border-radius: 50%;
         position: absolute;
-        top: 88px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        left: 15px;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        animation: indicatorBlink 1.5s ease-in-out infinite;
     }
 
-    .bear-dimple.left { left: 15px; }
-    .bear-dimple.right { right: 15px; }
+    .chest-indicator:nth-child(1) { top: 15px; }
+    .chest-indicator:nth-child(2) { top: 30px; animation-delay: 0.3s; }
+    .chest-indicator:nth-child(3) { top: 45px; animation-delay: 0.6s; }
 
-    .bear-mouth.smile ~ .bear-dimple {
-        opacity: 1;
+    @keyframes indicatorBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
     }
 
-    /* Bear Cheeks - ENHANCED */
-    .bear-cheek {
-        width: 50px;
-        height: 38px;
-        background: rgba(251, 146, 60, 0.35);
-        border-radius: 50%;
+    /* Heart Icon in Chest */
+    .robot-heart {
         position: absolute;
-        top: 68px;
-        transition: all 0.3s ease;
-        animation: cheekGlow 3s ease-in-out infinite;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+        animation: heartBeat 1.5s ease-in-out infinite;
     }
 
-    .bear-cheek.left { left: -12px; }
-    .bear-cheek.right { right: -12px; }
-
-    @keyframes cheekGlow {
-        0%, 100% { 
-            background: rgba(251, 146, 60, 0.35);
-            transform: scale(1);
-        }
-        50% { 
-            background: rgba(251, 146, 60, 0.5);
-            transform: scale(1.08);
-        }
+    @keyframes heartBeat {
+        0%, 100% { transform: translateY(-50%) scale(1); }
+        30% { transform: translateY(-50%) scale(1.1); }
+        60% { transform: translateY(-50%) scale(0.95); }
     }
 
-    /* Enhanced cheeks when happy */
-    .bear-mouth.smile ~ .bear-cheek {
-        background: rgba(251, 146, 60, 0.6);
-        transform: scale(1.15);
+    /* Excited Animation */
+    .character-container.excited {
+        animation: robotExcited 0.6s ease;
     }
 
-    /* Bear Belly */
-    .bear-belly {
-        width: 120px;
-        height: 100px;
-        background: #fde68a;
-        border-radius: 50%;
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: bellyBreathe 3s ease-in-out infinite;
-    }
-
-    @keyframes bellyBreathe {
-        0%, 100% { transform: translateX(-50%) scale(1, 1); }
-        50% { transform: translateX(-50%) scale(1.02, 0.98); }
-    }
-
-    /* Happy Jump Animation */
-    .character-container.happy {
-        animation: happyJump 0.6s ease;
-    }
-
-    @keyframes happyJump {
-        0%, 100% { transform: translateY(0); }
-        30% { transform: translateY(-25px) scale(1.05); }
-        50% { transform: translateY(-30px) scale(1.05); }
-        70% { transform: translateY(-10px) scale(0.98); }
+    @keyframes robotExcited {
+        0%, 100% { transform: translateY(0) scale(1); }
+        25% { transform: translateY(-15px) scale(1.03); }
+        50% { transform: translateY(-20px) scale(1.03) rotate(2deg); }
+        75% { transform: translateY(-10px) scale(1.03) rotate(-2deg); }
     }
 
     /* Nodding Animation */
-    .character-bear.nodding {
-        animation: happyNod 0.6s ease;
+    .robot-head.nodding {
+        animation: headNod 0.6s ease;
     }
 
-    @keyframes happyNod {
-        0%, 100% { 
-            transform: translate(-50%, -50%) rotateX(0deg); 
-        }
-        25% { 
-            transform: translate(-50%, -48%) rotateX(12deg) scale(1.02); 
-        }
-        75% { 
-            transform: translate(-50%, -52%) rotateX(-8deg) scale(1.02); 
-        }
+    @keyframes headNod {
+        0%, 100% { transform: translate(-50%, -50%); }
+        25% { transform: translate(-50%, -48%); }
+        75% { transform: translate(-50%, -52%); }
     }
 
     /* Illustration Text */
@@ -552,6 +450,9 @@
         padding: 60px 50px;
         background: white;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .form-header {
@@ -713,6 +614,7 @@
         gap: 12px;
         position: relative;
         overflow: hidden;
+        margin-top: 8px;
     }
 
     .submit-btn-siswa::before {
@@ -825,65 +727,47 @@
     <!-- Login Container - 2 Panel -->
     <div class="login-container-siswa">
         
-        <!-- LEFT SIDE - CHARACTER ILLUSTRATION -->
+        <!-- LEFT SIDE - ROBOT CHARACTER -->
         <div class="login-illustration">
             <div class="character-container" id="characterContainer">
-                <!-- Bear Character -->
-                <div class="character-bear" id="bearBody">
-                    <!-- Ears -->
-                    <div class="bear-ear left">
-                        <div class="bear-ear-inner"></div>
+                <!-- Robot Body -->
+                <div class="robot-body">
+                    <!-- Arms -->
+                    <div class="robot-arm left" id="leftArm">
+                        <div class="robot-hand"></div>
                     </div>
-                    <div class="bear-ear right">
-                        <div class="bear-ear-inner"></div>
+                    <div class="robot-arm right" id="rightArm">
+                        <div class="robot-hand"></div>
                     </div>
 
-                    <!-- Belly -->
-                    <div class="bear-belly"></div>
+                    <!-- Chest Panel -->
+                    <div class="robot-chest">
+                        <div class="chest-indicator"></div>
+                        <div class="chest-indicator"></div>
+                        <div class="chest-indicator"></div>
+                        <div class="robot-heart">❤️</div>
+                    </div>
+                </div>
 
-                    <!-- Face -->
-                    <div class="bear-face">
-                        <!-- Eyes with Eyelids -->
-                        <div class="bear-eyes" id="bearEyes">
-                            <div class="bear-eye" id="leftEye">
-                                <div class="bear-eyelid"></div>
-                                <div class="bear-pupil" id="leftPupil"></div>
+                <!-- Robot Head -->
+                <div class="robot-head" id="robotHead">
+                    <!-- Antenna -->
+                    <div class="robot-antenna"></div>
+
+                    <!-- Face Screen -->
+                    <div class="robot-face">
+                        <!-- Eyes -->
+                        <div class="robot-eyes">
+                            <div class="robot-eye" id="leftEye">
+                                <div class="robot-pupil" id="leftPupil"></div>
                             </div>
-                            <div class="bear-eye" id="rightEye">
-                                <div class="bear-eyelid"></div>
-                                <div class="bear-pupil" id="rightPupil"></div>
+                            <div class="robot-eye" id="rightEye">
+                                <div class="robot-pupil" id="rightPupil"></div>
                             </div>
                         </div>
 
-                        <!-- Hands for covering eyes -->
-                        <div class="bear-hand left" id="leftHand">
-                            <div class="hand-pad"></div>
-                            <div class="hand-finger"></div>
-                            <div class="hand-finger"></div>
-                            <div class="hand-finger"></div>
-                        </div>
-                        <div class="bear-hand right" id="rightHand">
-                            <div class="hand-pad"></div>
-                            <div class="hand-finger"></div>
-                            <div class="hand-finger"></div>
-                            <div class="hand-finger"></div>
-                        </div>
-
-                        <!-- Cheeks -->
-                        <div class="bear-cheek left"></div>
-                        <div class="bear-cheek right"></div>
-
-                        <!-- Nose -->
-                        <div class="bear-nose"></div>
-
-                        <!-- Simple cute mouth -->
-                        <div class="bear-mouth" id="bearMouth">
-                            <div class="bear-tongue"></div>
-                        </div>
-
-                        <!-- Dimples -->
-                        <div class="bear-dimple left"></div>
-                        <div class="bear-dimple right"></div>
+                        <!-- Mouth -->
+                        <div class="robot-mouth" id="robotMouth"></div>
                     </div>
                 </div>
             </div>
@@ -991,6 +875,8 @@ document.getElementById("device_id").value = localStorage.getItem("device_id");
 // Create particles
 function createParticles() {
     const container = document.getElementById('particles');
+    if (!container) return;
+    
     for (let i = 0; i < 50; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -1002,165 +888,212 @@ function createParticles() {
 }
 createParticles();
 
-// ========== CHARACTER INTERACTIONS ==========
+// ========== ROBOT INTERACTIONS ==========
 const leftPupil = document.getElementById('leftPupil');
 const rightPupil = document.getElementById('rightPupil');
 const leftEye = document.getElementById('leftEye');
 const rightEye = document.getElementById('rightEye');
-const bearEyes = document.getElementById('bearEyes');
-const leftHand = document.getElementById('leftHand');
-const rightHand = document.getElementById('rightHand');
-const bearBody = document.getElementById('bearBody');
-const bearMouth = document.getElementById('bearMouth');
+const leftArm = document.getElementById('leftArm');
+const rightArm = document.getElementById('rightArm');
+const robotHead = document.getElementById('robotHead');
+const robotMouth = document.getElementById('robotMouth');
 const characterContainer = document.getElementById('characterContainer');
 const namaInput = document.getElementById('namaInput');
 const passwordInput = document.getElementById('passwordInput');
 const submitBtn = document.getElementById('submitBtn');
+const loginForm = document.getElementById('loginForm');
 
 let isPasswordFocused = false;
-let blinkInterval;
+let eyeBlinkInterval;
 
-// ========== AUTO BLINKING ==========
-function startBlinking() {
-    blinkInterval = setInterval(() => {
-        if (!isPasswordFocused) {
-            blink();
-        }
-    }, Math.random() * 3000 + 2000); // Random blink every 2-5 seconds
+// Check if elements exist
+if (!leftPupil || !rightPupil || !leftEye || !rightEye) {
+    console.error('Robot elements not found');
 }
 
-function blink() {
-    leftEye.classList.add('blinking');
-    rightEye.classList.add('blinking');
+// ========== AUTO EYE BLINK ==========
+function startEyeBlink() {
+    eyeBlinkInterval = setInterval(() => {
+        if (!isPasswordFocused) {
+            blinkEyes();
+        }
+    }, Math.random() * 3000 + 2500);
+}
+
+function blinkEyes() {
+    if (!leftEye || !rightEye) return;
+    
+    leftEye.style.transform = 'scaleY(0.1)';
+    rightEye.style.transform = 'scaleY(0.1)';
     
     setTimeout(() => {
-        leftEye.classList.remove('blinking');
-        rightEye.classList.remove('blinking');
+        leftEye.style.transform = 'scaleY(1)';
+        rightEye.style.transform = 'scaleY(1)';
     }, 150);
 }
 
-// Start automatic blinking
-startBlinking();
+startEyeBlink();
 
 // ========== EYES FOLLOW MOUSE ==========
 document.addEventListener('mousemove', (e) => {
-    if (!isPasswordFocused) {
-        const pupils = [leftPupil, rightPupil];
-        pupils.forEach((pupil) => {
-            const eye = pupil.parentElement;
-            const eyeRect = eye.getBoundingClientRect();
-            const eyeCenterX = eyeRect.left + eyeRect.width / 2;
-            const eyeCenterY = eyeRect.top + eyeRect.height / 2;
-            
-            const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
-            const distance = Math.min(10, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 30);
-            
-            const pupilX = Math.cos(angle) * distance;
-            const pupilY = Math.sin(angle) * distance;
-            
-            pupil.style.transform = `translate(calc(-50% + ${pupilX}px), calc(-50% + ${pupilY}px))`;
-        });
-    }
+    if (isPasswordFocused || !leftPupil || !rightPupil) return;
+    
+    const pupils = [leftPupil, rightPupil];
+    pupils.forEach((pupil) => {
+        const eye = pupil.closest('.robot-eye');
+        if (!eye) return;
+        
+        const eyeRect = eye.getBoundingClientRect();
+        const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+        const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+        
+        const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
+        const distance = Math.min(8, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 40);
+        
+        const pupilX = Math.cos(angle) * distance;
+        const pupilY = Math.sin(angle) * distance;
+        
+        pupil.style.transform = `translate(calc(-50% + ${pupilX}px), calc(-50% + ${pupilY}px))`;
+    });
 });
 
 // ========== HAPPY NOD + SMILE WHEN TYPING NAME ==========
 let typingTimeout;
-namaInput.addEventListener('input', () => {
-    // Clear previous timeout
-    clearTimeout(typingTimeout);
-    
-    // Add happy animations
-    bearBody.classList.add('nodding');
-    bearMouth.classList.add('smile');
-    characterContainer.classList.add('happy');
-    
-    // Blink happily
-    blink();
-    
-    // Remove animations after delay
-    typingTimeout = setTimeout(() => {
-        bearBody.classList.remove('nodding');
-        characterContainer.classList.remove('happy');
-    }, 600);
-    
-    setTimeout(() => {
-        bearMouth.classList.remove('smile');
-    }, 2000);
-});
 
-// Keep smile while typing
-namaInput.addEventListener('focus', () => {
-    bearMouth.classList.add('smile');
-    setTimeout(blink, 300);
-});
-
-namaInput.addEventListener('blur', () => {
-    setTimeout(() => {
-        bearMouth.classList.remove('smile');
-    }, 500);
-});
-
-// ========== COVER EYES WITH HANDS WHEN PASSWORD FOCUSED ==========
-passwordInput.addEventListener('focus', () => {
-    isPasswordFocused = true;
-    
-    // Hide pupils first
-    leftPupil.style.opacity = '0';
-    rightPupil.style.opacity = '0';
-    
-    // Show hands covering eyes
-    setTimeout(() => {
-        leftHand.classList.add('show');
-        rightHand.classList.add('show');
-    }, 150);
-    
-    // Remove smile
-    bearMouth.classList.remove('smile');
-});
-
-passwordInput.addEventListener('blur', () => {
-    isPasswordFocused = false;
-    
-    // Remove hands
-    leftHand.classList.remove('show');
-    rightHand.classList.remove('show');
-    
-    // Show pupils again
-    setTimeout(() => {
-        leftPupil.style.opacity = '1';
-        rightPupil.style.opacity = '1';
+if (namaInput) {
+    namaInput.addEventListener('input', () => {
+        clearTimeout(typingTimeout);
         
-        // Happy blink after revealing
-        setTimeout(blink, 200);
-    }, 400);
-});
+        // Happy animations
+        if (robotHead) robotHead.classList.add('nodding');
+        if (robotMouth) robotMouth.classList.add('smile');
+        if (characterContainer) characterContainer.classList.add('excited');
+        
+        // Wave right arm
+        if (rightArm) {
+            rightArm.classList.add('wave');
+            setTimeout(() => rightArm.classList.remove('wave'), 600);
+        }
+        
+        // Blink happily
+        blinkEyes();
+        
+        typingTimeout = setTimeout(() => {
+            if (robotHead) robotHead.classList.remove('nodding');
+            if (characterContainer) characterContainer.classList.remove('excited');
+        }, 600);
+        
+        setTimeout(() => {
+            if (robotMouth && !namaInput.matches(':focus')) {
+                robotMouth.classList.remove('smile');
+            }
+        }, 2500);
+    });
+
+    // Keep smile while focused on name input
+    namaInput.addEventListener('focus', () => {
+        if (robotMouth) robotMouth.classList.add('smile');
+        setTimeout(blinkEyes, 300);
+    });
+
+    namaInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            if (robotMouth && !namaInput.value) {
+                robotMouth.classList.remove('smile');
+            }
+        }, 500);
+    });
+}
+
+// ========== COVER EYES WHEN PASSWORD FOCUSED - FIXED ==========
+if (passwordInput) {
+    passwordInput.addEventListener('focus', () => {
+        isPasswordFocused = true;
+        
+        // Dim eyes smoothly
+        if (leftEye) {
+            leftEye.style.background = '#334155';
+            leftEye.style.boxShadow = '0 0 5px rgba(51, 65, 85, 0.3)';
+        }
+        if (rightEye) {
+            rightEye.style.background = '#334155';
+            rightEye.style.boxShadow = '0 0 5px rgba(51, 65, 85, 0.3)';
+        }
+        if (leftPupil) leftPupil.style.opacity = '0';
+        if (rightPupil) rightPupil.style.opacity = '0';
+        
+        // Arms cover eyes smoothly
+        if (leftArm) leftArm.classList.add('cover');
+        if (rightArm) rightArm.classList.add('cover');
+        
+        // Remove smile
+        if (robotMouth) robotMouth.classList.remove('smile');
+    });
+
+    passwordInput.addEventListener('blur', () => {
+        isPasswordFocused = false;
+        
+        // Remove cover classes
+        if (leftArm) leftArm.classList.remove('cover');
+        if (rightArm) rightArm.classList.remove('cover');
+        
+        // Show eyes again with smooth transition
+        setTimeout(() => {
+            if (leftEye) {
+                leftEye.style.background = '#667eea';
+                leftEye.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.8), inset 0 2px 8px rgba(255, 255, 255, 0.3)';
+            }
+            if (rightEye) {
+                rightEye.style.background = '#667eea';
+                rightEye.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.8), inset 0 2px 8px rgba(255, 255, 255, 0.3)';
+            }
+            if (leftPupil) leftPupil.style.opacity = '1';
+            if (rightPupil) rightPupil.style.opacity = '1';
+            
+            // Happy blink after revealing
+            setTimeout(blinkEyes, 200);
+        }, 500);
+    });
+}
 
 // ========== EXCITED WHEN CLICKING SUBMIT ==========
-submitBtn.addEventListener('click', (e) => {
-    bearBody.classList.add('excited');
-    bearMouth.classList.add('smile');
-    characterContainer.classList.add('happy');
-    
-    // Multiple happy blinks
-    setTimeout(blink, 100);
-    setTimeout(blink, 400);
-});
+if (submitBtn) {
+    submitBtn.addEventListener('click', (e) => {
+        if (characterContainer) characterContainer.classList.add('excited');
+        if (robotMouth) robotMouth.classList.add('smile');
+        
+        // Both arms wave
+        if (leftArm) leftArm.classList.add('wave');
+        if (rightArm) rightArm.classList.add('wave');
+        
+        // Multiple happy blinks
+        setTimeout(blinkEyes, 100);
+        setTimeout(blinkEyes, 400);
+        
+        setTimeout(() => {
+            if (leftArm) leftArm.classList.remove('wave');
+            if (rightArm) rightArm.classList.remove('wave');
+        }, 600);
+    });
+}
 
 // ========== SMILE ON FORM HOVER ==========
-const loginForm = document.getElementById('loginForm');
-loginForm.addEventListener('mouseenter', () => {
-    if (!isPasswordFocused) {
-        bearMouth.classList.add('smile');
-    }
-});
+if (loginForm) {
+    loginForm.addEventListener('mouseenter', () => {
+        if (!isPasswordFocused && robotMouth) {
+            robotMouth.classList.add('smile');
+            blinkEyes();
+        }
+    });
 
-loginForm.addEventListener('mouseleave', () => {
-    if (!namaInput.matches(':focus')) {
-        setTimeout(() => {
-            bearMouth.classList.remove('smile');
-        }, 500);
-    }
-});
+    loginForm.addEventListener('mouseleave', () => {
+        if (robotMouth && namaInput && !namaInput.matches(':focus')) {
+            setTimeout(() => {
+                robotMouth.classList.remove('smile');
+            }, 500);
+        }
+    });
+}
 </script>
 
 @endsection

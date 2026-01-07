@@ -17,6 +17,9 @@ class ScanQrController extends Controller
 
     public function processScan(Request $request)
     {
+        // ===============================
+        // 1️⃣ SESSION VALIDATION
+        // ===============================
         if (!session()->has('siswa_id')) {
             return response()->json([
                 'status' => 'error',
@@ -36,6 +39,9 @@ class ScanQrController extends Controller
             ], 401);
         }
 
+        // ===============================
+        // 2️⃣ CEK QR TOKEN
+        // ===============================
         $token = QrToken::where('token', $request->kode)
             ->where('status', 'aktif')
             ->first();
@@ -49,6 +55,9 @@ class ScanQrController extends Controller
 
         $today = Carbon::now('Asia/Jakarta')->toDateString();
 
+        // ===============================
+        // 3️⃣ CEK SUDAH ABSEN?
+        // ===============================
         $already = Absensi::where('user_id', $user->id)
             ->whereDate('tanggal', $today)
             ->exists();
@@ -56,12 +65,47 @@ class ScanQrController extends Controller
         if ($already) {
             return response()->json([
                 'status' => 'info',
-                'message' => 'Kamu sudah absen hari ini'
+                'message' => '✅ Kamu sudah absen hari ini'
             ]);
         }
 
+        // ===============================
+        // 4️⃣ 🔒 DEVICE LOCK (FINAL)
+        // ===============================
+        $currentDevice = session('device_id');
+        $currentIp     = $request->ip();
+
+        // FIRST TIME ABSEN
+        if (is_null($user->device_id)) {
+            $user->device_id = $currentDevice;
+            $user->ip_address = $currentIp;
+            $user->save();
+        } else {
+            // DEVICE MISMATCH
+            if ($user->device_id !== $currentDevice) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => '❌ Perangkat tidak cocok dengan akun ini'
+                ], 403);
+            }
+
+            // (OPSIONAL) IP LOCK
+            if ($user->ip_address && $user->ip_address !== $currentIp) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => '❌ Jaringan tidak sesuai'
+                ], 403);
+            }
+        }
+
+        // ===============================
+        // 5️⃣ SIMPAN ABSENSI
+        // ===============================
         $now = Carbon::now('Asia/Jakarta');
-        $status = $now->format('H:i') <= '08:00' ? 'hadir' : 'terlambat';
+
+        $status = $now->format('H:i') <= '08:00'
+            ? 'hadir'
+            : 'terlambat';
 
         Absensi::create([
             'user_id'     => $user->id,
@@ -69,13 +113,12 @@ class ScanQrController extends Controller
             'waktu_absen' => $now,
             'status'      => $status,
             'metode'      => 'qr',
-            'ip_address'  => $request->ip(),
+            'ip_address'  => $currentIp,
         ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Absensi berhasil'
+            'message' => '🎉 Absensi berhasil'
         ]);
     }
-
 }

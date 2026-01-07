@@ -579,6 +579,44 @@
             </div>
 
         </div>
+{{-- ALERT STATUS HARI INI --}}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+    {{-- HADIR --}}
+    <div class="p-5 rounded-xl bg-green-100 border-2 border-green-300">
+        <div class="text-sm font-bold text-green-800">🟢 Hadir Hari Ini</div>
+        <div class="text-3xl font-black text-green-900">
+            {{ $hadirHariIni }}
+        </div>
+    </div>
+
+    {{-- TERLAMBAT --}}
+    <div class="p-5 rounded-xl bg-yellow-100 border-2 border-yellow-300">
+        <div class="text-sm font-bold text-yellow-800">⏰ Terlambat</div>
+        <div class="text-3xl font-black text-yellow-900">
+            {{ $terlambatHariIni }}
+        </div>
+    </div>
+
+    {{-- BELUM ABSEN --}}
+    <div class="p-5 rounded-xl bg-red-100 border-2 border-red-300">
+        <div class="text-sm font-bold text-red-800">⚫ Belum Absen</div>
+        <div class="text-3xl font-black text-red-900">
+            {{ $belumAbsen }}
+        </div>
+    </div>
+
+    {{-- STATUS QR --}}
+    <div class="p-5 rounded-xl {{ $qrAktif ? 'bg-indigo-100 border-indigo-300' : 'bg-gray-200 border-gray-400' }} border-2">
+        <div class="text-sm font-bold">
+            🔒 Status QR
+        </div>
+        <div class="text-xl font-black">
+            {{ $qrAktif ? 'AKTIF' : 'TIDAK AKTIF' }}
+        </div>
+    </div>
+
+</div>
 
 {{-- ================= GRAFIK & RANKING ================= --}}
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

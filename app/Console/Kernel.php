@@ -12,7 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        //
+        // AUTO ALPHA JAM 09:00 WIB
+        $schedule->command('absensi:auto-alpha')
+            ->dailyAt('09:00')
+            ->timezone('Asia/Jakarta');
     }
 
     /**
