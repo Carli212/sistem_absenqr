@@ -13,7 +13,7 @@
         backdrop-filter: blur(20px);
         border-radius: 24px;
         padding: 36px;
-        box-shadow: 
+        box-shadow:
             0 10px 40px rgba(102, 126, 234, 0.15),
             0 0 1px rgba(255, 255, 255, 0.8) inset;
         border: 1px solid rgba(102, 126, 234, 0.2);
@@ -350,8 +350,15 @@
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
     .empty-text {
@@ -395,8 +402,16 @@
     {{-- HEADER WITH ADD BUTTON --}}
     <div class="header-actions">
         <div>
-            <h1 class="section-title" style="margin-bottom: 8px;">👥 Daftar Peserta</h1>
-            <p style="color: #64748b; font-size: 14px; font-weight: 600;">Kelola data siswa yang terdaftar dalam sistem</p>
+            <h1 class="section-title"
+    style="
+        margin-bottom: 8px;
+        -webkit-text-fill-color: #ffffffff;
+        background: none;
+    ">
+    👥 Daftar Peserta
+</h1>
+
+            <p style="color: #ffffffff; font-size: 14px; font-weight: 600;">Kelola data siswa yang terdaftar dalam sistem</p>
         </div>
         <a href="{{ route('admin.user.create') }}" class="btn-add">
             ➕ Tambah Siswa Baru
@@ -411,16 +426,16 @@
             <div class="stat-icon">👥</div>
         </div>
 
-    <div class="stat-card green">
-        <div class="stat-label">✅ Aktif Hari Ini</div>
-        <div class="stat-value">{{ $aktifHariIni }}</div>
-    </div>
+        <div class="stat-card green">
+            <div class="stat-label">✅ Aktif Hari Ini</div>
+            <div class="stat-value">{{ $aktifHariIni }}</div>
+        </div>
 
-    <div class="stat-card gray">
-        <div class="stat-label">⏸️ Tidak Absen Hari Ini</div>
-        <div class="stat-value">{{ $tidakAktifHariIni }}</div>
+        <div class="stat-card gray">
+            <div class="stat-label">⏸️ Tidak Absen Hari Ini</div>
+            <div class="stat-value">{{ $tidakAktifHariIni }}</div>
+        </div>
     </div>
-</div>
 
     {{-- TABLE --}}
     <div class="manual-card">
@@ -439,69 +454,69 @@
                 </thead>
                 <tbody>
                     @forelse ($users as $u)
-                        <tr>
-                            <td style="font-weight: 700;">{{ $loop->iteration }}</td>
-                            
-                            <td>
-                                <div style="display: flex; align-items: center;">
-                                    <div class="user-avatar">
-                                        {{ strtoupper(substr($u->nama ?? 'U', 0, 1)) }}
-                                    </div>
-                                    <span style="font-weight: 700;">{{ $u->nama }}</span>
-                                </div>
-                            </td>
-                            
-                            <td>
-@if($u->absensis->count())
-    <span class="status-badge status-hadir">
-        ✅ Hadir Hari Ini
-    </span>
-@else
-    <span class="status-badge status-tidak-aktif">
-        ⏸️ Belum Absen
-    </span>
-@endif
-</td>
+                    <tr>
+                        <td style="font-weight: 700;">{{ $loop->iteration }}</td>
 
-                            
-                            <td style="font-family: monospace; font-weight: 600; color: #64748b;">
-                                {{ $u->created_at?->format('d/m/Y') ?? '-' }}
-                            </td>
-                            
-                            <td>
-                                <div class="action-buttons">
-                                   <button class="btn-action btn-edit"
-    onclick="window.location.href='{{ route('admin.user.edit',$u->id) }}'">
-    ✏️ Edit
-</button>
+                        <td>
+                            <div style="display: flex; align-items: center;">
+                                <div class="user-avatar">
+                                    {{ strtoupper(substr($u->nama ?? 'U', 0, 1)) }}
+                                </div>
+                                <span style="font-weight: 700;">{{ $u->nama }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            @if($u->absensis->count())
+                            <span class="status-badge status-hadir">
+                                ✅ Hadir Hari Ini
+                            </span>
+                            @else
+                            <span class="status-badge status-tidak-aktif">
+                                ⏸️ Belum Absen
+                            </span>
+                            @endif
+                        </td>
+
+
+                        <td style="font-family: monospace; font-weight: 600; color: #64748b;">
+                            {{ $u->created_at?->format('d/m/Y') ?? '-' }}
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-edit"
+                                    onclick="window.location.href='{{ route('admin.user.edit',$u->id) }}'">
+                                    ✏️ Edit
+                                </button>
 
                                 <form method="POST"
-      action="{{ route('admin.user.delete',$u->id) }}"
-      onsubmit="return confirm('Hapus peserta ini?')">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn-action btn-delete">
-        🗑️ Hapus
-    </button>
-</form>
+                                    action="{{ route('admin.user.delete',$u->id) }}"
+                                    onsubmit="return confirm('Hapus peserta ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-action btn-delete">
+                                        🗑️ Hapus
+                                    </button>
+                                </form>
 
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <div class="empty-icon">📭</div>
-                                    <div class="empty-text">Belum ada data peserta</div>
-                                    <div style="margin-top: 24px;">
-                                        <a href="{{ route('admin.user.create') }}" class="btn-add">
-                                            ➕ Tambah Siswa Pertama
-                                        </a>
-                                    </div>
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <div class="empty-text">Belum ada data peserta</div>
+                                <div style="margin-top: 24px;">
+                                    <a href="{{ route('admin.user.create') }}" class="btn-add">
+                                        ➕ Tambah Siswa Pertama
+                                    </a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -511,10 +526,10 @@
 </div>
 
 <script>
-function editUser(id) {
-    // Redirect ke halaman edit
-    window.location.href = `/admin/users/${id}/edit`;
-}
+    function editUser(id) {
+        // Redirect ke halaman edit
+        window.location.href = `/admin/users/${id}/edit`;
+    }
 </script>
 
 @endsection

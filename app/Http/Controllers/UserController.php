@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Absensi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -47,8 +48,26 @@ class UserController extends Controller
         return back()->with('success', 'Foto profil berhasil diperbarui!');
     }
 
-    public function success()
-    {
-        return view('user.success');
+
+public function success()
+{
+    if (!session()->has('siswa_id')) {
+        return redirect()->route('login.siswa.show');
     }
+
+    $userId = session('siswa_id');
+    $today  = Carbon::now('Asia/Jakarta')->toDateString();
+
+    $absen = Absensi::where('user_id', $userId)
+        ->whereDate('waktu_absen', $today)
+        ->latest('waktu_absen')
+        ->first();
+
+    // Kalau belum absen, jangan boleh masuk halaman success
+    if (!$absen) {
+        return redirect()->route('user.dashboard');
+    }
+
+    return view('user.success', compact('absen'));
+}
 }

@@ -514,6 +514,7 @@
     .stat-card:nth-child(1) { animation-delay: 0.1s; }
     .stat-card:nth-child(2) { animation-delay: 0.2s; }
     .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -546,7 +547,7 @@
     <div class="space-y-6" style="position: relative; z-index: 10;">
 
         <!-- ==== STAT CARDS ==== -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
             <!-- Total Siswa -->
             <div class="stat-card fade-in">
@@ -578,47 +579,21 @@
                 </div>
             </div>
 
-        </div>
-{{-- ALERT STATUS HARI INI --}}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <!-- Status QR -->
+            <div class="stat-card fade-in">
+                <div class="stat-icon-large">🔒</div>
+                <div class="stat-label">Status QR</div>
+                <div class="stat-value" style="background: linear-gradient(135deg, {{ $qrAktif ? '#10b981' : '#64748b' }} 0%, {{ $qrAktif ? '#059669' : '#475569' }} 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    {{ $qrAktif ? 'AKTIF' : 'TIDAK AKTIF' }}
+                </div>
+                <div class="stat-change {{ $qrAktif ? 'positive' : 'negative' }}">
+                    {{ $qrAktif ? 'Sistem berjalan normal' : 'Sistem dinonaktifkan' }}
+                </div>
+            </div>
 
-    {{-- HADIR --}}
-    <div class="p-5 rounded-xl bg-green-100 border-2 border-green-300">
-        <div class="text-sm font-bold text-green-800">🟢 Hadir Hari Ini</div>
-        <div class="text-3xl font-black text-green-900">
-            {{ $hadirHariIni }}
         </div>
-    </div>
 
-    {{-- TERLAMBAT --}}
-    <div class="p-5 rounded-xl bg-yellow-100 border-2 border-yellow-300">
-        <div class="text-sm font-bold text-yellow-800">⏰ Terlambat</div>
-        <div class="text-3xl font-black text-yellow-900">
-            {{ $terlambatHariIni }}
-        </div>
-    </div>
-
-    {{-- BELUM ABSEN --}}
-    <div class="p-5 rounded-xl bg-red-100 border-2 border-red-300">
-        <div class="text-sm font-bold text-red-800">⚫ Belum Absen</div>
-        <div class="text-3xl font-black text-red-900">
-            {{ $belumAbsen }}
-        </div>
-    </div>
-
-    {{-- STATUS QR --}}
-    <div class="p-5 rounded-xl {{ $qrAktif ? 'bg-indigo-100 border-indigo-300' : 'bg-gray-200 border-gray-400' }} border-2">
-        <div class="text-sm font-bold">
-            🔒 Status QR
-        </div>
-        <div class="text-xl font-black">
-            {{ $qrAktif ? 'AKTIF' : 'TIDAK AKTIF' }}
-        </div>
-    </div>
-
-</div>
-
-{{-- ================= GRAFIK & RANKING ================= --}}
+        {{-- ================= GRAFIK & RANKING ================= --}}
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -681,6 +656,21 @@
                     </tbody>
                 </table>
             </div>
+{{-- ================= LIVE MONITORING ================= --}}
+<div class="chart-card mt-6">
+    <h3 class="chart-title">🔴 Live Monitoring Absensi</h3>
+    <p class="chart-subtitle">
+        Update otomatis setiap 5 detik (Realtime)
+    </p>
+
+    <ul id="liveList" class="mt-4 space-y-2 text-sm">
+        <li class="text-gray-400">Menunggu data...</li>
+    </ul>
+
+    <audio id="liveSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3">
+    </audio>
+</div>
 
         </div>
     </div>
@@ -805,7 +795,43 @@ fetch('/admin/ranking')
                     <td>${r.total_hadir}</td>
                 </tr>
             `).join('');
-            
+       
     });
 </script>
+<script>
+let lastCountLive = 0;
+
+async function loadLive() {
+    const res = await fetch("{{ route('admin.live.monitor') }}");
+    const data = await res.json();
+
+    const list = document.getElementById('liveList');
+    list.innerHTML = '';
+
+    data.list.forEach(item => {
+        let badge = '🟢';
+        if (item.status === 'terlambat') badge = '⏰';
+        if (item.status === 'alpha') badge = '❌';
+
+        list.innerHTML += `
+            <li class="flex justify-between border-b pb-1">
+                <span>${badge} ${item.nama}</span>
+                <span class="text-gray-500">${item.waktu}</span>
+            </li>
+        `;
+    });
+
+    // 🔔 SOUND JIKA ADA ABSEN BARU
+    if (data.sudahAbsen > lastCountLive) {
+        document.getElementById('liveSound').play();
+    }
+
+    lastCountLive = data.sudahAbsen;
+}
+
+// LOAD & INTERVAL
+loadLive();
+setInterval(loadLive, 5000);
+</script>
+
 @endsection

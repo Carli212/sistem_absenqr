@@ -68,7 +68,7 @@ body {
         transform: translate(-20px, 20px) scale(0.9);
     }
 }
-
+ 
 /* Success Card */
 .success-card {
     position: relative;
@@ -393,15 +393,22 @@ body {
         <div class="success-details">
             <div class="detail-row">
                 <span class="detail-label">📅 Tanggal</span>
-                <span class="detail-value" id="current-date"></span>
+                <span class="detail-value">
+    {{ \Carbon\Carbon::parse($absen->waktu_absen)->translatedFormat('l, d F Y') }}
+</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">⏰ Waktu</span>
-                <span class="detail-value" id="current-time"></span>
+                <span class="detail-value">
+    {{ \Carbon\Carbon::parse($absen->waktu_absen)->format('H:i:s') }} WIB
+</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">✅ Status</span>
-                <span class="detail-value" style="color: #059669;">Tercatat</span>
+                <span class="detail-value"
+      style="color: {{ $absen->status === 'terlambat' ? '#f59e0b' : '#059669' }};">
+    {{ strtoupper($absen->status) }}
+</span>
             </div>
         </div>
 

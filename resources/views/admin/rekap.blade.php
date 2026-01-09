@@ -380,153 +380,144 @@
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
-    /* ===== PAGINATION STYLING ===== */
-    .pagination-wrapper {
+    /* ===== MODERN PAGINATION STYLING ===== */
+    .custom-pagination-wrapper {
+        margin-top: 36px;
+        padding-top: 32px;
+        border-top: 3px solid #e0e7ff;
         display: flex;
         flex-direction: column;
-        gap: 24px;
-        margin-top: 32px;
-        padding-top: 28px;
-        border-top: 2px solid #e0e7ff;
+        gap: 20px;
+        align-items: center;
     }
 
-    /* Info Text Styling */
-    .pagination-info {
-        text-align: center;
+    /* Pagination Info */
+    .custom-pagination-info {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 16px 32px;
+        border-radius: 16px;
+        border: 2px solid #e0e7ff;
         font-size: 15px;
         font-weight: 600;
         color: #64748b;
         letter-spacing: 0.3px;
-        padding: 16px 24px;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border-radius: 12px;
-        border: 2px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
 
-    .pagination-info strong {
+    .custom-pagination-info strong {
         color: #667eea;
         font-weight: 900;
-        font-size: 16px;
+        font-size: 17px;
+        padding: 0 4px;
     }
 
     /* Pagination Container */
-    .pagination {
+    .custom-pagination {
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: 10px;
-        list-style: none;
-        padding: 0;
-        margin: 0;
+        gap: 8px;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
-    /* Pagination Items */
-    .pagination li {
-        display: inline-block;
-    }
-
-    /* Pagination Links & Spans */
-    .pagination a,
-    .pagination span {
-        display: flex;
+    /* Pagination Button Base */
+    .custom-page-btn {
+        min-width: 44px;
+        height: 44px;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 46px;
-        height: 46px;
-        padding: 0 18px;
-        border-radius: 14px;
-        font-size: 15px;
+        padding: 0 16px;
+        border-radius: 12px;
+        font-size: 14px;
         font-weight: 700;
         text-decoration: none;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 2px solid transparent;
-    }
-
-    /* Default Link Style */
-    .pagination a {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 2px solid #e2e8f0;
+        background: white;
         color: #475569;
-        border-color: #e2e8f0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
-    .pagination a:hover {
+    .custom-page-btn:hover {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-color: #667eea;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
     }
 
     /* Active Page */
-    .pagination .active span {
+    .custom-page-btn.active {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-color: #667eea;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
         cursor: default;
         position: relative;
     }
 
-    .pagination .active span::after {
+    .custom-page-btn.active::before {
         content: '';
         position: absolute;
         bottom: -2px;
         left: 50%;
         transform: translateX(-50%);
-        width: 24px;
+        width: 20px;
         height: 3px;
         background: white;
         border-radius: 2px;
     }
 
+    .custom-page-btn.active:hover {
+        transform: translateY(0);
+    }
+
     /* Disabled State */
-    .pagination .disabled span {
+    .custom-page-btn.disabled {
         background: #f1f5f9;
         color: #cbd5e1;
         border-color: #e2e8f0;
         cursor: not-allowed;
-        opacity: 0.6;
-        box-shadow: none;
+        opacity: 0.5;
+        pointer-events: none;
     }
 
     /* Previous & Next Buttons */
-    .pagination li:first-child a,
-    .pagination li:last-child a {
+    .custom-page-btn.nav-btn {
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        font-size: 13px;
-        padding: 0 24px;
-        background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-        border-width: 2px;
+        font-size: 12px;
+        padding: 0 20px;
+        gap: 8px;
     }
 
-    .pagination li:first-child a:hover,
-    .pagination li:last-child a:hover {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        transform: translateY(-3px) scale(1.05);
-    }
-
-    /* Dots/Ellipsis */
-    .pagination .disabled span {
-        background: transparent;
-        border: none;
-        color: #94a3b8;
-        cursor: default;
+    /* Dots */
+    .custom-page-dots {
         min-width: auto;
-        padding: 0 10px;
-        font-size: 18px;
+        padding: 0 8px;
+        color: #94a3b8;
+        font-size: 16px;
         font-weight: 900;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        cursor: default;
+    }
+
+    .custom-page-dots:hover {
+        transform: none;
+        background: transparent;
+        color: #94a3b8;
         box-shadow: none;
     }
 
-    /* Add animation to pagination */
+    /* Animation */
     @keyframes slideUp {
         from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(15px);
         }
         to {
             opacity: 1;
@@ -534,64 +525,52 @@
         }
     }
 
-    .pagination-wrapper {
+    .custom-pagination-wrapper {
         animation: slideUp 0.5s ease-out;
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .pagination {
-            gap: 8px;
+        .custom-pagination {
+            gap: 6px;
         }
         
-        .pagination a,
-        .pagination span {
-            min-width: 40px;
-            height: 40px;
-            font-size: 14px;
-            padding: 0 14px;
-        }
-        
-        .pagination li:first-child a,
-        .pagination li:last-child a {
-            padding: 0 18px;
-            font-size: 12px;
-        }
-        
-        /* Hide middle page numbers on mobile */
-        .pagination li:not(:first-child):not(:last-child):not(.active):not(.disabled) {
-            display: none;
-        }
-
-        .pagination-info {
+        .custom-page-btn {
+            min-width: 38px;
+            height: 38px;
             font-size: 13px;
-            padding: 14px 18px;
+            padding: 0 12px;
+        }
+        
+        .custom-page-btn.nav-btn {
+            padding: 0 16px;
+            font-size: 11px;
+        }
+        
+        .custom-pagination-info {
+            font-size: 13px;
+            padding: 12px 20px;
         }
 
-        .pagination-info strong {
-            font-size: 14px;
+        .custom-pagination-info strong {
+            font-size: 15px;
         }
     }
 
     @media (max-width: 480px) {
-        .pagination-wrapper {
-            gap: 20px;
-        }
-        
-        .pagination-info {
-            font-size: 12px;
-            padding: 12px 16px;
-        }
-
-        .pagination-info strong {
-            font-size: 13px;
-        }
-
-        .pagination a,
-        .pagination span {
+        .custom-page-btn {
             min-width: 36px;
             height: 36px;
-            font-size: 13px;
+            font-size: 12px;
+        }
+        
+        .custom-pagination-info {
+            font-size: 12px;
+            padding: 10px 16px;
+        }
+
+        .custom-pagination-info strong {
+            font-size: 14px;
         }
     }
 </style>
@@ -694,7 +673,7 @@
                 <tbody>
                     @forelse($rekap as $i => $r)
                     <tr>
-                        <td style="font-weight: 700;">{{ $i + 1 }}</td>
+                        <td style="font-weight: 700;">{{ ($rekap->currentPage() - 1) * $rekap->perPage() + $i + 1 }}</td>
 
                         <td>
                             <div style="display: flex; align-items: center;">
@@ -749,22 +728,55 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
+        {{-- Custom Pagination --}}
         @if($rekap->hasPages())
-        <div class="pagination-wrapper">
+        <div class="custom-pagination-wrapper">
             {{-- Pagination Info --}}
-            <div class="pagination-info">
-                Menampilkan 
+            <div class="custom-pagination-info">
+                📊 Menampilkan 
                 <strong>{{ $rekap->firstItem() }}</strong> 
                 sampai 
                 <strong>{{ $rekap->lastItem() }}</strong> 
                 dari 
                 <strong>{{ $rekap->total() }}</strong> 
-                hasil
+                data
             </div>
             
             {{-- Pagination Links --}}
-            {{ $rekap->links() }}
+            <div class="custom-pagination">
+                {{-- Previous Button --}}
+                @if ($rekap->onFirstPage())
+                    <span class="custom-page-btn nav-btn disabled">
+                        ← Prev
+                    </span>
+                @else
+                    <a href="{{ $rekap->previousPageUrl() }}" class="custom-page-btn nav-btn">
+                        ← Prev
+                    </a>
+                @endif
+
+                {{-- Page Numbers --}}
+                @foreach ($rekap->getUrlRange(1, $rekap->lastPage()) as $page => $url)
+                    @if ($page == $rekap->currentPage())
+                        <span class="custom-page-btn active">{{ $page }}</span>
+                    @elseif ($page == 1 || $page == $rekap->lastPage() || abs($page - $rekap->currentPage()) <= 2)
+                        <a href="{{ $url }}" class="custom-page-btn">{{ $page }}</a>
+                    @elseif (abs($page - $rekap->currentPage()) == 3)
+                        <span class="custom-page-dots">⋯</span>
+                    @endif
+                @endforeach
+
+                {{-- Next Button --}}
+                @if ($rekap->hasMorePages())
+                    <a href="{{ $rekap->nextPageUrl() }}" class="custom-page-btn nav-btn">
+                        Next →
+                    </a>
+                @else
+                    <span class="custom-page-btn nav-btn disabled">
+                        Next →
+                    </span>
+                @endif
+            </div>
         </div>
         @endif
     </div>

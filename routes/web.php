@@ -151,17 +151,20 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::get('/ranking', [AdminController::class, 'rankingKehadiran'])->name('admin.ranking');
 
     // ================= USERS MANAGEMENT =================
-Route::get('/users', [AdminController::class,'manageUser'])
-    ->name('admin.user.index');
+    Route::get('/users', [AdminController::class, 'manageUser'])
+        ->name('admin.user.index');
 
-Route::get('/users/{id}/edit', [AdminController::class,'editUser'])
-    ->name('admin.user.edit');
+    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])
+        ->name('admin.user.edit');
 
-Route::put('/users/{id}', [AdminController::class,'updateUser'])
-    ->name('admin.user.update');
+    Route::put('/users/{id}', [AdminController::class, 'updateUser'])
+        ->name('admin.user.update');
 
-Route::delete('/users/{id}', [AdminController::class,'deleteUser'])
-    ->name('admin.user.delete');
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])
+        ->name('admin.user.delete');
+
+    Route::get('/live-monitor', [AdminController::class, 'liveMonitor'])
+        ->name('admin.live.monitor');
 
     // Logout Admin
     Route::post('/logout', [AdminAuthController::class, 'logoutAdmin'])
