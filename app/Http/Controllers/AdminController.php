@@ -55,12 +55,7 @@ class AdminController extends Controller
             ->whereDate('waktu_absen', $today)
             ->orderBy('waktu_absen')
             ->get();
-
-        // STATUS QR
-        $qrAktif = QrToken::where('status', 'aktif')
-            ->where('expired_at', '>', now())
-            ->exists();
-
+            
         return view('admin.dashboard', compact(
             'totalSiswa',
             'hadir',

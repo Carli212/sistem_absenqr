@@ -622,15 +622,7 @@
                 <audio id="notifSound">
                     <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3">
                 </audio>
-
-                {{-- ===== RANKING ===== --}}
-                <div class="ranking-card">
-                    <h3>🏆 Ranking Kehadiran Bulan Ini</h3>
-                    <table class="w-full text-sm">
-                        <tbody id="rankingTable"></tbody>
-                    </table>
-                </div>
-            </div>
+                
 
             {{-- ===== TABEL HARI INI ===== --}}
             <div class="table-card">
