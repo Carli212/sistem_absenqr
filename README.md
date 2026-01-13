@@ -1,66 +1,181 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📌 ABSENIN 
+Sistem Absensi QR Code Berbasis Web
+adalah aplikasi berbasis web yang digunakan untuk mencatat kehadiran siswa secara **real-time**, **aman**, dan **terkontrol** menggunakan teknologi QR Code.  
+Sistem ini dirancang untuk mencegah kecurangan absensi, mendukung monitoring langsung oleh admin, serta menyediakan riwayat kehadiran yang akurat.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## 🎯 Tujuan Sistem
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Mengganti absensi manual menjadi **digital dan otomatis**
+- Mencegah titip absen menggunakan **QR Token & Device Lock**
+- Memberikan **monitoring real-time** untuk admin
+- Menyediakan **dashboard siswa dan admin** yang informatif
+- Mendukung rekap absensi harian, mingguan, dan bulanan
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🧩 Fitur Utama
 
-## Learning Laravel
+### 👨‍🎓 Fitur Siswa
+- Login siswa
+- Scan QR Code untuk absensi
+- Status absensi hari ini (Hadir / Terlambat / Alpha)
+- Riwayat absensi pribadi
+- Informasi waktu dan metode absensi
+- Dashboard responsif (mobile friendly)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 👨‍💼 Fitur Admin
+- Dashboard admin (overview kehadiran hari ini)
+- Generate QR Code (token dinamis & expired)
+- Live Monitoring absensi (real-time)
+- Absensi manual (izin, sakit, alpha)
+- Kalender absensi
+- Buku absensi & rekap data
+- Manajemen siswa
+- Pengaturan jam absensi (jam awal, tepat waktu, terlambat)
+- Export data absensi (siap dikembangkan)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🔐 Sistem Keamanan
 
-## Laravel Sponsors
+Sistem ini menerapkan beberapa lapisan keamanan:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **QR Token Dinamis**
+  - Token hanya aktif dalam waktu tertentu
+  - Token otomatis kedaluwarsa
 
-### Premium Partners
+- **Session Validation**
+  - Siswa harus login untuk melakukan scan
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **Device Lock (Opsional)**
+  - Satu akun hanya dapat digunakan pada satu perangkat
+  - Admin dapat melakukan reset device bila diperlukan
 
-## Contributing
+- **IP Address Tracking**
+  - IP disimpan untuk keperluan audit & monitoring
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## ⏱️ Penentuan Status Absensi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Status absensi ditentukan **satu kali saat proses scan QR** dan disimpan ke database:
 
-## Security Vulnerabilities
+| Waktu Absen | Status |
+|------------|--------|
+| ≤ Jam Tepat | Hadir |
+| > Jam Tepat & ≤ Jam Terlambat | Terlambat |
+| > Jam Terlambat | Alpha |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Semua tampilan (Admin & Siswa) **mengambil data langsung dari database**  
+(tidak ada perhitungan ulang di sisi tampilan).
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🏗️ Teknologi yang Digunakan
+
+- **Framework**: Laravel
+- **Bahasa**: PHP
+- **Database**: MySQL
+- **Frontend**: Blade Template + Tailwind CSS
+- **QR Code**: SimpleSoftwareIO QrCode
+- **Chart**: Chart.js
+- **Realtime Update**: AJAX / Fetch API
+- **Time Handling**: Carbon (Asia/Jakarta)
+
+---
+
+## 📂 Struktur Direktori Penting
+
+```
+
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── AuthController.php
+│   │   ├── ScanQrController.php
+│   │   ├── AbsensiController.php
+│   │   ├── AdminController.php
+│   │   └── UserController.php
+│
+resources/
+├── views/
+│   ├── admin/
+│   ├── user/
+│   ├── auth/
+│   └── layouts/
+│
+database/
+├── migrations/
+│
+routes/
+├── web.php
+
+
+````
+
+---
+
+## ⚙️ Pengaturan Sistem
+
+Admin dapat mengatur:
+- Jam awal absensi
+- Jam batas tepat waktu
+- Jam batas terlambat
+- Mode absensi
+
+Semua pengaturan disimpan di database dan **langsung memengaruhi sistem** tanpa perlu restart.
+
+---
+
+## 🚀 Cara Menjalankan Project
+
+1. Clone repository
+```bash
+git clone <repo-url>
+````
+
+2. Install dependency
+
+```bash
+composer install
+npm install
+```
+
+3. Setup environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. Migrasi database
+
+```bash
+php artisan migrate
+```
+
+5. Jalankan server
+
+```bash
+php artisan serve
+```
+
+---
+
+## 📌 Catatan Pengembangan
+
+* Sistem sudah mendukung skala sekolah
+* Mudah dikembangkan ke:
+
+  * Notifikasi WhatsApp
+  * Face recognition
+  * Export laporan PDF / Excel
+  * Multi kelas & jurusan
+
+---
+
+## 👨‍💻 Author
+
+Dikembangkan sebagai proyek sistem informasi absensi modern berbasis web dengan fokus pada **keamanan, real-time monitoring, dan akurasi data**.
