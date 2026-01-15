@@ -180,7 +180,8 @@ php artisan serve
 
 Dikembangkan sebagai proyek sistem informasi absensi modern berbasis web dengan fokus pada **keamanan, real-time monitoring, dan akurasi data**.
 
-📊 Penjelasan Entitas pada
+
+## 📊 Penjelasan Entitas pada
 ERD SISTEM HADIRIN
 ![ERD HADIRIN](ERD-HADIRIN.jpg)
 ERD ini menggambarkan struktur database utama dari Sistem Absensi QR Code (ABSENIN) yang digunakan untuk mengelola data siswa, absensi, admin, keamanan, serta pengaturan sistem.
