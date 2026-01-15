@@ -179,3 +179,294 @@ php artisan serve
 ## 👨‍💻 Author
 
 Dikembangkan sebagai proyek sistem informasi absensi modern berbasis web dengan fokus pada **keamanan, real-time monitoring, dan akurasi data**.
+
+📊 Penjelasan Entitas pada ERD Sistem ABSENIN
+
+ERD ini menggambarkan struktur database utama dari Sistem Absensi QR Code (ABSENIN) yang digunakan untuk mengelola data siswa, absensi, admin, keamanan, serta pengaturan sistem.
+
+1️⃣ users
+
+Fungsi: Menyimpan data akun siswa yang menggunakan sistem absensi.
+
+Atribut penting:
+
+id → Primary Key
+
+nama → Nama siswa
+
+password → Password login siswa
+
+tanggal_lahir → Data identitas siswa
+
+ip_address, last_ip → Menyimpan IP terakhir (keamanan)
+
+device_id → Identitas perangkat siswa (device lock)
+
+user_agent → Informasi browser/perangkat
+
+last_login_at → Waktu login terakhir
+
+foto → Foto profil siswa
+
+
+Peran di sistem:
+
+Menjadi aktor utama dalam proses absensi
+
+Terhubung langsung dengan tabel absensis
+
+Digunakan untuk keamanan 1 akun = 1 perangkat
+
+
+2️⃣ absensis
+
+Fungsi: Menyimpan data kehadiran siswa setiap hari.
+
+Atribut penting:
+
+id → Primary Key
+
+user_id → Foreign Key ke tabel users
+
+tanggal → Tanggal absensi
+
+waktu_absen → Jam absen
+
+status → hadir / terlambat / izin / sakit / alpha
+
+metode → qr / manual
+
+ip_address, device_id, user_agent → Validasi keamanan
+
+
+Relasi:
+
+Many to One ke users (1 siswa bisa punya banyak absensi)
+
+
+Peran di sistem:
+
+Inti dari seluruh sistem absensi
+
+Digunakan di:
+
+Dashboard admin
+
+Dashboard siswa
+
+Rekap
+
+Kalender
+
+Ranking kehadiran
+
+
+
+3️⃣ admins
+
+Fungsi: Menyimpan data akun admin sistem.
+
+Atribut penting:
+
+id → Primary Key
+
+nama → Nama admin
+
+nomor_wa → Kontak admin (opsional / bisa dihapus)
+
+password → Password admin
+
+
+Peran di sistem:
+
+Mengelola:
+
+QR Code
+
+Pengaturan jam
+
+Absensi manual
+
+Data siswa
+
+
+Tidak ikut absensi (aktor pengelola)
+
+
+4️⃣ qr_tokens
+
+Fungsi: Menyimpan QR Code sementara untuk absensi.
+
+Atribut penting:
+
+id
+
+token → Kode QR
+
+expired_at → Masa berlaku QR
+
+status → aktif / nonaktif
+
+
+Peran di sistem:
+
+Mencegah reuse QR
+
+Menjamin absensi hanya di waktu tertentu
+
+Menjadi penghubung antara admin & siswa saat absensi
+
+
+5️⃣ settings
+
+Fungsi: Menyimpan konfigurasi dinamis sistem.
+
+Atribut penting:
+
+key → Nama pengaturan
+
+value → Nilai pengaturan
+
+
+Contoh isi:
+
+jam_awal
+
+jam_tepat
+
+jam_terlambat
+
+mode_absen
+
+
+Peran di sistem:
+
+Menentukan status hadir / terlambat
+
+Bisa diubah admin tanpa ubah kode
+
+Digunakan di ScanQrController & AbsensiController
+
+
+6️⃣ sessions
+
+Fungsi: Menyimpan session login pengguna (Laravel default).
+
+Atribut penting:
+
+user_id
+
+ip_address
+
+user_agent
+
+last_activity
+
+
+Peran di sistem:
+
+Menjaga status login siswa & admin
+
+Digunakan untuk redirect otomatis:
+
+login → dashboard
+
+logout → hapus session
+
+
+
+7️⃣ activity_logs
+
+Fungsi: Mencatat aktivitas pengguna (audit trail).
+
+Atribut penting:
+
+user_id
+
+activity → jenis aktivitas
+
+description
+
+ip
+
+device_id
+
+user_agent
+
+
+Peran di sistem:
+
+Monitoring keamanan
+
+Bukti aktivitas user
+
+Cocok untuk pengembangan fitur log aktivitas admin/siswa
+
+
+8️⃣ personal_access_tokens
+
+Fungsi: Digunakan untuk API authentication (Laravel Sanctum).
+
+Atribut penting:
+
+token
+
+abilities
+
+expires_at
+
+
+Peran di sistem:
+
+Saat ini belum dominan
+
+Siap untuk pengembangan:
+
+Mobile App
+
+API eksternal
+
+Integrasi sistem lain
+
+
+
+9️⃣ failed_jobs
+
+Fungsi: Menyimpan job background yang gagal.
+
+Peran di sistem:
+
+Debugging
+
+Monitoring queue
+
+Default Laravel (bukan fitur utama absensi)
+
+
+🔟 migrations
+
+Fungsi: Menyimpan riwayat struktur database.
+
+Peran di sistem:
+
+Kontrol versi database
+
+Menjamin konsistensi struktur tabel
+
+
+🔗 HUBUNGAN ANTAR ENTITAS (RINGKAS)
+
+users ⟶ absensis (1:N)
+
+admins ⟶ qr_tokens (logika sistem)
+
+settings ⟶ seluruh proses absensi
+
+sessions ⟶ users & admins
+
+activity_logs ⟶ users
+
+qr_tokens ⟶ absensis
+
+
+Apakah sudah valid seperti tabel database di gambar??
